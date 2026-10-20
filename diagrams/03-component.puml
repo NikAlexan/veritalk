@@ -1,59 +1,42 @@
-@startuml component
-' VRT-8: Component diagram (DRAFT, C4 level 3 style)
-' Source of truth for diagrams/03-component.svg / .png
+@startuml
+' VRT-8: Component diagram (C4 level 3, DRAFT)
+' Scope: the Analysis server container only. Other containers appear as supporting elements.
 !include <C4/C4_Component>
 
-title VeriTalk — Component Diagram (draft)
+title [Component] VeriTalk — Analysis server (draft)
 
-Person(user, "Phone user")
+Container(app, "Mobile app", "Kotlin 2.4, Android", "Imports recordings, captures speakerphone audio, shows reports")
+ContainerDb(db, "Report database", "PostgreSQL 18", "Users, consents, reports. No audio")
+ContainerDb(tmp, "Temporary audio storage", "Ephemeral volume", "Audio held only during analysis")
+Container(ml, "ML training pipeline", "PyTorch, MLflow", "Exports versioned models")
 
-Container_Boundary(app, "Android app (Kotlin 2.4, Jetpack Compose)") {
-  Component(ui, "UI screens", "Jetpack Compose", "Upload, live analysis, report, history, consent, sharing")
-  Component(capture, "Live capture service", "Foreground service, AudioRecord", "Captures 16 kHz mono PCM from the microphone during a speakerphone call")
-  Component(importer, "Recording importer", "Share intent / file picker", "Receives recordings from the device dialer")
-  Component(client, "API client", "OkHttp, Retrofit", "HTTPS for uploads and reports, WebSocket for streaming")
+Container_Boundary(server, "Analysis server (Python 3.14, FastAPI)") {
+  Component(rest, "REST API", "FastAPI routers", "Endpoints for upload, reports, sharing, consent and deletion")
+  Component(ws, "Streaming endpoint", "FastAPI WebSocket", "Receives live audio chunks and pushes risk updates")
+  Component(auth, "Auth and consent", "JWT, SQLAlchemy", "Verifies tokens; rejects analysis without consent")
+  Component(pipe, "Analysis pipeline", "Python worker", "Runs VAD, ASR, risk scoring and explanation; deletes audio when done")
+  Component(asr, "Speech recognizer", "faster-whisper, Silero VAD", "Transcribes Russian, Kazakh and code-switched speech")
+  Component(risk, "Risk scorer", "XLM-RoBERTa, ONNX Runtime", "Detects fraud indicators per segment; computes score 0-100")
+  Component(expl, "Explanation builder", "Python", "Links each indicator to its supporting transcript segments")
+  Component(repo, "Report repository", "SQLAlchemy", "Persists and deletes reports, indicators, segments, shares")
 }
 
-Container_Boundary(server, "Analysis server (Python 3.14, FastAPI, Kubernetes)") {
-  Component(api, "API gateway", "FastAPI", "REST endpoints: auth, upload, reports, sharing, consent, deletion")
-  Component(stream, "Streaming handler", "FastAPI WebSocket", "Receives audio chunks, pushes updated risk results")
-  Component(auth, "Auth & consent", "JWT", "Accounts, tokens, consent records")
-  Component(pipeline, "Analysis pipeline", "Python worker", "Orchestrates VAD -> ASR -> risk scoring -> explanation; deletes audio when done")
-  Component(asr, "ASR service", "faster-whisper (CTranslate2), VAD", "Russian, Kazakh and code-switched transcription")
-  Component(risk, "Risk model service", "XLM-RoBERTa on ONNX Runtime", "Detects fraud indicators per segment and computes risk score 0-100")
-  Component(baseline, "Keyword baseline", "Rule list", "Indicator matching for evaluation comparison")
-  Component(explain, "Explanation builder", "Python", "Links each indicator to supporting transcript segments")
-}
-
-ContainerDb(db, "Report database", "PostgreSQL 18", "Users, consents, reports (score, indicators, segments). No audio")
-ContainerDb(tmp, "Temporary audio storage", "Ephemeral volume", "Audio kept only while a job runs")
-
-Container_Boundary(mlops, "Offline ML pipeline (not deployed with the app)") {
-  Component(data, "Corpus", "DVC", "Annotated RU/KZ transcripts and indicator taxonomy")
-  Component(train, "Training & evaluation", "PyTorch, Transformers, MLflow", "Fine-tuning, metrics, model registry, export to ONNX")
-}
-
-Rel(user, ui, "Uses")
-Rel(ui, importer, "Picks recording")
-Rel(ui, capture, "Starts / stops live analysis")
-Rel(importer, client, "Audio file")
-Rel(capture, client, "Audio chunks")
-Rel(ui, client, "Requests reports")
-Rel(client, api, "Upload, reports", "HTTPS/JSON")
-Rel(client, stream, "Audio up / risk updates down", "WebSocket")
-Rel(api, auth, "Checks token and consent")
-Rel(stream, auth, "Checks token and consent")
-Rel(api, pipeline, "Submits recording job")
-Rel(stream, pipeline, "Submits utterances")
-Rel(pipeline, tmp, "Writes / deletes audio")
-Rel(pipeline, asr, "Audio segments")
-Rel(pipeline, risk, "Transcript segments")
-Rel(pipeline, explain, "Indicators + segments")
-Rel(api, db, "Reads / writes reports")
-Rel(pipeline, db, "Saves report")
-Rel(train, data, "Reads")
-Rel(train, risk, "Publishes model version", "ONNX artifact")
-Rel(train, baseline, "Compares against")
+Rel(app, rest, "Uploads recordings, requests reports", "HTTPS/JSON")
+Rel(app, ws, "Streams audio chunks to", "WebSocket")
+Rel(ws, app, "Pushes risk updates to", "WebSocket")
+Rel(rest, auth, "Checks token and consent with")
+Rel(ws, auth, "Checks token and consent with")
+Rel(rest, pipe, "Submits recording jobs to")
+Rel(ws, pipe, "Submits utterances to")
+Rel(pipe, tmp, "Stores and deletes audio in", "File I/O")
+Rel(pipe, asr, "Sends audio segments to")
+Rel(pipe, risk, "Sends transcript segments to")
+Rel(pipe, expl, "Sends indicators and segments to")
+Rel(pipe, repo, "Saves finished reports through")
+Rel(rest, repo, "Reads, shares and deletes reports through")
+Rel(auth, db, "Reads users and consents from", "SQL")
+Rel(repo, db, "Reads and writes reports in", "SQL")
+Rel(ml, risk, "Supplies model versions to", "ONNX artifact")
 
 SHOW_LEGEND()
 @enduml

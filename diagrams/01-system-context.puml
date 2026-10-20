@@ -1,25 +1,24 @@
-@startuml system-context
+@startuml
 ' VRT-8: System context diagram (C4 level 1)
-' Source of truth for diagrams/01-system-context.svg / .png
+' Scope: the VeriTalk software system. Technologies are intentionally omitted (see 04-container).
 !include <C4/C4_Context>
 
-title VeriTalk — System Context
+title [System Context] VeriTalk — call fraud risk assessment
 
-Person(user, "Phone user", "Mobile phone user in Kazakhstan receiving calls in Russian or Kazakh; primary user")
-Person(family, "Family member", "Helps a vulnerable user assess suspicious calls; views reports shared with them")
-Person_Ext(caller, "Caller", "Other party of the phone call; possibly a fraudster. Not a user of the system")
+Person(user, "Phone user", "Receives calls in Russian or Kazakh; wants to know whether a call is a fraud attempt")
+Person(family, "Family member", "Helps a vulnerable relative assess suspicious calls")
+Person_Ext(caller, "Caller", "Other party of the call, possibly a fraudster. Does not use VeriTalk")
 
-System(veritalk, "VeriTalk", "Android app + server-side AI. Assesses the fraud risk of a phone conversation from its content and explains the assessment (risk score, indicators, evidence)")
+System(veritalk, "VeriTalk", "Assesses the fraud risk of a phone conversation from what is said and explains the result: risk score, fraud indicators and the phrases that support them")
 
-System_Ext(dialer, "Device dialer / call recorder", "Pre-installed Android phone app that records calls; source of recordings")
-System_Ext(android, "Android OS", "Microphone, notifications, foreground services, sharing between apps")
+System_Ext(dialer, "Phone dialer", "Pre-installed phone app on the user's Android device; records calls")
 
-Rel(caller, user, "Talks to", "phone call on speakerphone")
-Rel(user, veritalk, "Uploads recordings, starts live analysis, reads risk reports, gives consent")
-Rel(veritalk, user, "Shows risk score, indicators and transcript evidence; warns during a live call")
-Rel(family, veritalk, "Views shared reports")
-Rel(dialer, veritalk, "Provides call recording", "Android share intent / file picker")
-Rel(veritalk, android, "Captures speakerphone audio, posts warnings", "AudioRecord, notifications")
+Rel(caller, user, "Talks to during a phone call")
+Rel(user, veritalk, "Submits a call recording or a live speakerphone call for analysis; manages consent and reports")
+Rel(veritalk, user, "Shows the risk report and warns during a live call")
+Rel(dialer, veritalk, "Supplies call recordings shared by the user")
+Rel(user, family, "Shares a risk report with")
+Rel(family, veritalk, "Views shared risk reports in")
 
 SHOW_LEGEND()
 @enduml

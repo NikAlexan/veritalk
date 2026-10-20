@@ -16,8 +16,9 @@ Inclusion rules:
 2. **Last five years.** Published in October 2021 or later.
 3. **Actually used.** The source informs a design or evaluation decision in VeriTalk.
 4. **Traceable.** The source has a DOI or a stable link.
+5. **Open access.** The full text can be read free of charge, either at the publisher (MDPI, ACL Anthology, ISCA Archive, PMLR, AAAI, and the ACM Digital Library, which has been fully open access since January 2026) or as an arXiv version.
 
-Sixteen sources were retained, all published in 2022–2026. Thirteen are peer-reviewed (journal articles and conference papers, including a student abstract and an extended abstract); three are arXiv preprints, used because they are the most recent work on their topic and no peer-reviewed equivalent was found.
+Sixteen sources were retained, all published in 2022–2026. Twelve are peer-reviewed (journal articles and conference papers, including a student abstract and an extended abstract); four are arXiv preprints, used because they are the most recent work on their topic and no peer-reviewed equivalent was found.
 
 ## II. Analysis Table
 
@@ -39,7 +40,7 @@ Sixteen sources were retained, all published in 2022–2026. Thirteen are peer-r
 | [12] | Mussakhojayeva et al., 2023 (Information) | Journal article | 13 monolingual and 9 multilingual ASR models for ten Turkic languages | Best multilingual model cuts CER and WER by 56.7% and 54.3%; related Turkic languages help more than Russian or English | Read speech; no code-switching evaluation | Multilingual fine-tuning helps Kazakh, but Russian data alone will not fix Kazakh errors |
 | [13] | Yeshpanov, 2026 (LREC) | Conference paper | Fine-tuning Whisper on 4.5 h of Kazakh songs plus Common Voice and FLEURS | Zero-shot Whisper WER on KSC2 is 81.2%; fine-tuning lowers it to 39.3% | Still worse than models trained on KSC2 itself | Quantifies how poorly off-the-shelf Whisper handles Kazakh, so fine-tuning on KSC2 is mandatory |
 | [14] | Yeshpanov and Varol, 2024 (LREC-COLING) | Conference paper | KazSAnDRA: 180,064 Kazakh reviews; mBERT, XLM-R, RemBERT and mBART-50 fine-tuned for classification | Best model reaches F1 0.81 for binary polarity but 0.39 for five-class scores | Sentiment, not fraud; written reviews, not speech transcripts | Evidence that multilingual encoders including XLM-R (VRT-6) work for Kazakh binary classification, while fine-grained scales are much harder |
-| [15] | Desolda et al., 2023 (IJHCS) | Journal article | Phishing warning dialogs that explain the most suspicious feature, compared with Chrome, Firefox and Edge warnings in a study with 150 participants | Most explanations were understood and showed potential to steer users away from malicious sites | Web phishing, not calls; remote survey rather than field use | Supports working assumption 2: a warning that names the concrete reason is understood better than a bare label |
+| [15] | Saha Roy et al., 2025 | arXiv preprint | PhishXplain: a small LLM (Llama 3.2) highlights the suspicious elements of a phishing site in the warning; one-month deployment and a user study with 150 participants | Warnings generated for 94% of 7,091 live phishing sites with 96% correctness; users with explanations understood phishing indicators better and identified phishing more accurately than users with generic warnings | Web phishing, not calls | Supports working assumption 2: a warning that names the concrete reason is understood better than a bare label, and a small model can generate it in real time |
 | [16] | Cau et al., 2025 | arXiv preprint | Controlled experiment with 750 participants comparing expert-written and LLM-generated explanations in phishing warnings | LLM-generated explanations give protection comparable to expert-written ones; feature-based explanations help on real attacks, counterfactual ones reduce false positives | Email phishing; results differ between preprint versions | Supports generating the explanation text automatically, provided it is grounded in the detected indicators |
 
 ## III. Critical Review
@@ -68,7 +69,7 @@ KazSAnDRA [14] is the only reviewed primary study that fine-tunes XLM-R and simi
 
 ### E. Explanations, Warnings and Privacy
 
-Most detection studies report only a label or score. LLM justifications [1] can be hallucinated, and attention-based interpretation [6] is not a reliable explanation of the decision. User studies on phishing warnings point the same way from the user's side: warnings that name the concrete suspicious feature are understood better than generic ones [15], and automatically generated explanations can protect users as well as expert-written ones when they are built on specific features [16]. This supports the proposal's working assumption 2 and the design in which each explanation is tied to a detected indicator and its transcript segment. Both studies concern web and email phishing, so the effect for phone calls still has to be confirmed in usability testing (O6).
+Most detection studies report only a label or score. LLM justifications [1] can be hallucinated, and attention-based interpretation [6] is not a reliable explanation of the decision. User studies on phishing warnings point the same way from the user's side: warnings that point to the concrete suspicious elements improve users' understanding and recognition of phishing compared with generic warnings [15], and automatically generated explanations can protect users as well as expert-written ones when they are built on specific features [16]. This supports the proposal's working assumption 2 and the design in which each explanation is tied to a detected indicator and its transcript segment. Both studies concern web and email phishing and one is a preprint, so the effect for phone calls still has to be confirmed in usability testing (O6).
 
 On privacy, Wang et al. [3] are the only reviewed work that treats call content as sensitive data inside the detection pipeline. They show a measurable cost in accuracy when content is sanitised before analysis, which supports VeriTalk's choice to process audio on its own server and delete it after analysis rather than send transcripts to external services.
 
@@ -88,7 +89,7 @@ On privacy, Wang et al. [3] are the only reviewed work that treats call content 
 
 ## V. Limitations of This Review
 
-- Three sources [7], [8], [16] are preprints and have not been peer-reviewed. [7] is reported by its authors as under revision at a journal.
+- Four sources [7], [8], [15], [16] are preprints and have not been peer-reviewed. [7] is reported by its authors as under revision at a journal.
 - Restricting the review to primary sources from the last five years excludes earlier foundational work, such as the original multilingual encoder and scam psychology studies. Where they matter, their effect is covered through recent studies that build on them (for example [14] for XLM-R).
 - No peer-reviewed study on phone-scam detection in Russian or Kazakh was found. This supports the gap but may also reflect publications in local journals not indexed by the search tools used.
 - Detection results in [2], [4], [5], [7] are reported on different datasets and metrics and cannot be compared numerically.
@@ -98,11 +99,11 @@ On privacy, Wang et al. [3] are the only reviewed work that treats call content 
 
 [1] Z. Shen, K. Wang, Y. Zhang, G. Ngai, and E. Y. Fu, "Combating phone scams with LLM-based detection: Where do we stand? (Student abstract)," in *Proc. AAAI Conf. Artif. Intell.*, 2025, pp. 29487–29489. [Online]. Available: <https://ojs.aaai.org/index.php/AAAI/article/view/35298>
 
-[2] Z. Shen, S. Yan, Y. Zhang, X. Luo, G. Ngai, and E. Y. Fu, "'It warned me just at the right moment': Exploring LLM-based real-time detection of phone scams," in *Extended Abstracts CHI Conf. Human Factors Comput. Syst. (CHI EA)*, 2025, doi: 10.1145/3706599.3720263.
+[2] Z. Shen, S. Yan, Y. Zhang, X. Luo, G. Ngai, and E. Y. Fu, "'It warned me just at the right moment': Exploring LLM-based real-time detection of phone scams," in *Extended Abstracts CHI Conf. Human Factors Comput. Syst. (CHI EA)*, 2025, doi: 10.1145/3706599.3720263. Open version: <https://arxiv.org/abs/2502.03964>
 
-[3] K. Wang, Z. Shen, Y. Zhang, M. M. K. Cheung, X. Luo, G. Ngai, and E. Y. Fu, "One size fits all? A modular adaptive sanitization kit (MASK) for customizable privacy-preserving phone scam detection," in *Proc. 33rd ACM Int. Conf. Multimedia (MM)*, 2025, pp. 12381–12389, doi: 10.1145/3746027.3758164.
+[3] K. Wang, Z. Shen, Y. Zhang, M. M. K. Cheung, X. Luo, G. Ngai, and E. Y. Fu, "One size fits all? A modular adaptive sanitization kit (MASK) for customizable privacy-preserving phone scam detection," in *Proc. 33rd ACM Int. Conf. Multimedia (MM)*, 2025, pp. 12381–12389, doi: 10.1145/3746027.3758164. Open version: <https://arxiv.org/abs/2510.18493>
 
-[4] Z. Ma *et al.*, "TeleAntiFraud-28k: An audio-text slow-thinking dataset for telecom fraud detection," in *Proc. 33rd ACM Int. Conf. Multimedia (MM)*, 2025, pp. 5853–5862, doi: 10.1145/3746027.3755835.
+[4] Z. Ma *et al.*, "TeleAntiFraud-28k: An audio-text slow-thinking dataset for telecom fraud detection," in *Proc. 33rd ACM Int. Conf. Multimedia (MM)*, 2025, pp. 5853–5862, doi: 10.1145/3746027.3755835. Open version: <https://arxiv.org/abs/2503.24115>
 
 [5] M. K. Moussavou Boussougou and D.-J. Park, "Attention-based 1D CNN-BiLSTM hybrid model enhanced with FastText word embedding for Korean voice phishing detection," *Mathematics*, vol. 11, no. 14, Art. no. 3217, 2023, doi: 10.3390/math11143217.
 
@@ -124,6 +125,6 @@ On privacy, Wang et al. [3] are the only reviewed work that treats call content 
 
 [14] R. Yeshpanov and H. A. Varol, "KazSAnDRA: Kazakh sentiment analysis dataset of reviews and attitudes," in *Proc. Joint Int. Conf. Comput. Linguistics, Lang. Resources Eval. (LREC-COLING)*, 2024, pp. 9657–9667. [Online]. Available: <https://aclanthology.org/2024.lrec-main.844>
 
-[15] G. Desolda, J. Aneke, C. Ardito, R. Lanzilotti, and M. F. Costabile, "Explanations in warning dialogs to help users defend against phishing attacks," *Int. J. Human-Comput. Stud.*, vol. 176, Art. no. 103056, 2023, doi: 10.1016/j.ijhcs.2023.103056.
+[15] S. Saha Roy, C. Torres, and S. Nilizadeh, "'Explain, don't just warn!' A real-time framework for generating phishing warnings with contextual cues," 2025, *arXiv:2505.06836*. [Online]. Available: <https://arxiv.org/abs/2505.06836>
 
 [16] F. M. Cau, G. Desolda, F. Greco, L. D. Spano, and L. Viganò, "Can large language models automate phishing warning explanations? A controlled experiment on effectiveness and user perception," 2025, *arXiv:2507.07916*. [Online]. Available: <https://arxiv.org/abs/2507.07916>

@@ -104,15 +104,24 @@ Each alternative is rated against the relevant drivers: ✔ meets, ◐ partially
 
 | Layer | Technology |
 | --- | --- |
-| Mobile client | Native Android: Kotlin, Jetpack Compose |
+| Mobile client | Native Android: Kotlin 2.4, Jetpack Compose |
 | Transport | HTTPS (recording upload), WebSocket (streaming) |
-| Server API | Python 3.11+, FastAPI |
+| Server API | Python 3.14, FastAPI |
 | Speech recognition | Whisper via faster-whisper (CTranslate2), with voice-activity detection; wav2vec 2.0 as evaluated fallback |
 | Risk model | Fine-tuned XLM-RoBERTa indicator tagger + scoring, served with ONNX Runtime; keyword baseline |
 | ML tooling | PyTorch, Hugging Face Transformers, MLflow (experiments), DVC (data versioning) |
 | Data augmentation | Self-hosted open-weight LLM (offline only) |
-| Storage | PostgreSQL; temporary files for audio, deleted after analysis |
+| Storage | PostgreSQL 18; temporary files for audio, deleted after analysis |
 | Deployment | Kubernetes (k3s) with GitHub Actions CI/CD; Docker Compose for local development |
+
+### Version policy
+
+Versions are the latest stable releases at the time of writing, with one deliberate exception per layer where the newest release is too recent for the dependencies:
+
+- **Python 3.14**, not 3.15: Python 3.15 was released on Oct. 9, 2026, and binary wheels for the ML stack (PyTorch, CTranslate2, ONNX Runtime) typically lag a new interpreter by several months. 3.14 is current, supported, and covered by these wheels. Migration to 3.15 is planned once the wheels are available.
+- **PostgreSQL 18**, not 19: PostgreSQL 19 is at release-candidate stage (RC1, Oct. 15, 2026; general availability planned for Nov. 19, 2026). The prototype starts on 18 and can be upgraded after 19 is released.
+- **Kotlin 2.4** (2.4.20 at the time of writing), Jetpack Compose via the current Compose BOM.
+- Library versions (FastAPI, Transformers, faster-whisper, ONNX Runtime) are pinned in lock files when the code is created, at their latest stable versions.
 
 ## X. Risks and Items to Verify
 

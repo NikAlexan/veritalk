@@ -40,6 +40,22 @@ Group SE-2410, Astana IT University.
 
 The full proposal is available in [docs/01-proposal.md](docs/01-proposal.md).
 
+## Selected Technologies
+
+| Layer | Technology |
+| --- | --- |
+| Mobile client | Native Android: Kotlin 2.4, Jetpack Compose |
+| Transport | HTTPS (recording upload), WebSocket (streaming) |
+| Server API | Python 3.14, FastAPI |
+| Speech recognition | Whisper via faster-whisper (CTranslate2), with voice-activity detection; wav2vec 2.0 as evaluated fallback |
+| Risk model | Fine-tuned XLM-RoBERTa indicator tagger + scoring, served with ONNX Runtime; keyword baseline |
+| ML tooling | PyTorch, Hugging Face Transformers, MLflow (experiments), DVC (data versioning) |
+| Data augmentation | Self-hosted open-weight LLM (offline only) |
+| Storage | PostgreSQL 18; audio kept only in temporary files and deleted after analysis |
+| Deployment | Kubernetes (k3s) with GitHub Actions CI/CD; Docker Compose for local development |
+
+The rationale for each choice is given in [docs/05-technology-comparison.md](docs/05-technology-comparison.md).
+
 ## Current Status
 
 Pre-defense 1 stage: analysis and design. The repository contains documents and diagrams; application code starts after pre-defense 1. Milestones, owners and risks are listed in [docs/09-risks-and-management.md](docs/09-risks-and-management.md).
@@ -50,5 +66,6 @@ Pre-defense 1 stage: analysis and design. The repository contains documents and 
 - [Project proposal](docs/01-proposal.md)
 - [Literature review](docs/03-literature-review.md)
 - [Existing system comparison](docs/04-existing-systems.md)
+- [Technology comparison](docs/05-technology-comparison.md)
 - [Architecture description](docs/07-architecture.md) and [diagrams](diagrams/)
 - [Project management and risks](docs/09-risks-and-management.md)

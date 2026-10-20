@@ -1,0 +1,24 @@
+@startuml
+' VRT-8: System context diagram (C4 level 1)
+' Scope: the VeriTalk software system. Technologies are intentionally omitted (see 04-container).
+!include <C4/C4_Context>
+
+title [System Context] VeriTalk — call fraud risk assessment
+
+Person(user, "Phone user", "Receives calls in Russian or Kazakh; wants to know whether a call is a fraud attempt")
+Person(family, "Family member", "Helps a vulnerable relative assess suspicious calls")
+Person_Ext(caller, "Caller", "Other party of the call, possibly a fraudster. Does not use VeriTalk")
+
+System(veritalk, "VeriTalk", "Assesses the fraud risk of a phone conversation from what is said and explains the result: risk score, fraud indicators and the phrases that support them")
+
+System_Ext(dialer, "Phone dialer", "Pre-installed phone app on the user's Android device; records calls")
+
+Rel(caller, user, "Talks to during a phone call")
+Rel(user, veritalk, "Submits a call recording or a live speakerphone call for analysis; manages consent and reports")
+Rel(veritalk, user, "Shows the risk report and warns during a live call")
+Rel(dialer, veritalk, "Supplies call recordings shared by the user")
+Rel(user, family, "Shares a risk report with")
+Rel(family, veritalk, "Views shared risk reports in")
+
+SHOW_LEGEND()
+@enduml

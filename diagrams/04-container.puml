@@ -1,0 +1,29 @@
+@startuml
+' VRT-8: Container diagram (C4 level 2) — bridges system context and component diagrams
+!include <C4/C4_Container>
+
+title [Container] VeriTalk — applications and data stores
+
+Person(user, "Phone user")
+Person(family, "Family member")
+System_Ext(dialer, "Phone dialer", "Pre-installed Android phone app")
+
+System_Boundary(vt, "VeriTalk") {
+  Container(app, "Mobile app", "Kotlin 2.4, Jetpack Compose, Android", "Imports recordings, captures speakerphone audio, shows reports and warnings")
+  Container(server, "Analysis server", "Python 3.14, FastAPI", "Authenticates users, runs speech recognition and risk assessment, serves reports")
+  ContainerDb(db, "Report database", "PostgreSQL 18", "Users, consents, reports, indicators, evidence segments. No audio")
+  ContainerDb(tmp, "Temporary audio storage", "Ephemeral volume", "Audio held only while an analysis runs")
+  Container(ml, "ML training pipeline", "PyTorch, Transformers, MLflow, DVC", "Offline: trains and evaluates models, exports them to ONNX")
+}
+
+Rel(user, app, "Analyses calls and reads reports with")
+Rel(family, app, "Reads shared reports with")
+Rel(dialer, app, "Shares call recordings with", "Android share intent")
+Rel(app, server, "Uploads recordings, requests reports", "HTTPS/JSON")
+Rel(app, server, "Streams live audio and receives risk updates", "WebSocket")
+Rel(server, db, "Reads and writes reports", "SQL")
+Rel(server, tmp, "Writes audio and deletes it after analysis", "File I/O")
+Rel(ml, server, "Delivers versioned models to", "ONNX artifact")
+
+SHOW_LEGEND()
+@enduml

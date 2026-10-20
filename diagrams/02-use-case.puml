@@ -1,0 +1,49 @@
+@startuml
+' VRT-8: Use case diagram (UML)
+' User-goal level only. Authentication is a precondition (subfunction), not shown as a use case.
+left to right direction
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+
+title [Use Case] VeriTalk — user goals
+
+actor "Phone user" as User
+actor "Family member" as Family
+actor "Phone dialer" as Dialer <<system>>
+
+rectangle "VeriTalk" {
+  usecase "UC-1 Manage consent\nto call analysis" as UC1
+  usecase "UC-2 Analyse a recorded call" as UC2
+  usecase "UC-3 Analyse a live call\non speakerphone" as UC3
+  usecase "UC-4 Warn about high risk\nduring a live call" as UC4
+  usecase "UC-5 View a risk report" as UC5
+  usecase "UC-6 Delete reports\nand personal data" as UC6
+  usecase "UC-7 Share a risk report" as UC7
+  usecase "UC-8 View a shared risk report" as UC8
+}
+
+' Primary actors on the left
+User --> UC1
+User --> UC2
+User --> UC3
+User --> UC5
+User --> UC6
+User --> UC7
+Family --> UC8
+
+' Secondary actor on the right: responds to the use case
+UC2 --> Dialer : obtain recording
+
+' Conditional behaviour
+UC4 .> UC3 : <<extend>>\ncondition: {risk score ≥ warning threshold}
+
+legend right
+  | Notation | Meaning |
+  | actor | Person or external system interacting with VeriTalk |
+  | <<system>> | Secondary actor (external system) |
+  | solid arrow | Actor participates in the use case |
+  | <<extend>> | Optional behaviour added under the stated condition |
+  Preconditions not drawn: the user is signed in;
+  UC-2 and UC-3 require consent given in UC-1.
+endlegend
+@enduml

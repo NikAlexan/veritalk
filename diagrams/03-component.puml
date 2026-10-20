@@ -1,0 +1,42 @@
+@startuml
+' VRT-8: Component diagram (C4 level 3, DRAFT)
+' Scope: the Analysis server container only. Other containers appear as supporting elements.
+!include <C4/C4_Component>
+
+title [Component] VeriTalk — Analysis server (draft)
+
+Container(app, "Mobile app", "Kotlin 2.4, Android", "Imports recordings, captures speakerphone audio, shows reports")
+ContainerDb(db, "Report database", "PostgreSQL 18", "Users, consents, reports. No audio")
+ContainerDb(tmp, "Temporary audio storage", "Ephemeral volume", "Audio held only during analysis")
+Container(ml, "ML training pipeline", "PyTorch, MLflow", "Exports versioned models")
+
+Container_Boundary(server, "Analysis server (Python 3.14, FastAPI)") {
+  Component(rest, "REST API", "FastAPI routers", "Endpoints for upload, reports, sharing, consent and deletion")
+  Component(ws, "Streaming endpoint", "FastAPI WebSocket", "Receives live audio chunks and pushes risk updates")
+  Component(auth, "Auth and consent", "JWT, SQLAlchemy", "Verifies tokens; rejects analysis without consent")
+  Component(pipe, "Analysis pipeline", "Python worker", "Runs VAD, ASR, risk scoring and explanation; deletes audio when done")
+  Component(asr, "Speech recognizer", "faster-whisper, Silero VAD", "Transcribes Russian, Kazakh and code-switched speech")
+  Component(risk, "Risk scorer", "XLM-RoBERTa, ONNX Runtime", "Detects fraud indicators per segment; computes score 0-100")
+  Component(expl, "Explanation builder", "Python", "Links each indicator to its supporting transcript segments")
+  Component(repo, "Report repository", "SQLAlchemy", "Persists and deletes reports, indicators, segments, shares")
+}
+
+Rel(app, rest, "Uploads recordings, requests reports", "HTTPS/JSON")
+Rel(app, ws, "Streams audio chunks to", "WebSocket")
+Rel(ws, app, "Pushes risk updates to", "WebSocket")
+Rel(rest, auth, "Checks token and consent with")
+Rel(ws, auth, "Checks token and consent with")
+Rel(rest, pipe, "Submits recording jobs to")
+Rel(ws, pipe, "Submits utterances to")
+Rel(pipe, tmp, "Stores and deletes audio in", "File I/O")
+Rel(pipe, asr, "Sends audio segments to")
+Rel(pipe, risk, "Sends transcript segments to")
+Rel(pipe, expl, "Sends indicators and segments to")
+Rel(pipe, repo, "Saves finished reports through")
+Rel(rest, repo, "Reads, shares and deletes reports through")
+Rel(auth, db, "Reads users and consents from", "SQL")
+Rel(repo, db, "Reads and writes reports in", "SQL")
+Rel(ml, risk, "Supplies model versions to", "ONNX artifact")
+
+SHOW_LEGEND()
+@enduml

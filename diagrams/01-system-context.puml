@@ -1,0 +1,25 @@
+@startuml system-context
+' VRT-8: System context diagram (C4 level 1)
+' Source of truth for diagrams/01-system-context.svg / .png
+!include <C4/C4_Context>
+
+title VeriTalk — System Context
+
+Person(user, "Phone user", "Mobile phone user in Kazakhstan receiving calls in Russian or Kazakh; primary user")
+Person(family, "Family member", "Helps a vulnerable user assess suspicious calls; views reports shared with them")
+Person_Ext(caller, "Caller", "Other party of the phone call; possibly a fraudster. Not a user of the system")
+
+System(veritalk, "VeriTalk", "Android app + server-side AI. Assesses the fraud risk of a phone conversation from its content and explains the assessment (risk score, indicators, evidence)")
+
+System_Ext(dialer, "Device dialer / call recorder", "Pre-installed Android phone app that records calls; source of recordings")
+System_Ext(android, "Android OS", "Microphone, notifications, foreground services, sharing between apps")
+
+Rel(caller, user, "Talks to", "phone call on speakerphone")
+Rel(user, veritalk, "Uploads recordings, starts live analysis, reads risk reports, gives consent")
+Rel(veritalk, user, "Shows risk score, indicators and transcript evidence; warns during a live call")
+Rel(family, veritalk, "Views shared reports")
+Rel(dialer, veritalk, "Provides call recording", "Android share intent / file picker")
+Rel(veritalk, android, "Captures speakerphone audio, posts warnings", "AudioRecord, notifications")
+
+SHOW_LEGEND()
+@enduml

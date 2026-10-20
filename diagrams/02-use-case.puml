@@ -1,0 +1,47 @@
+@startuml use-case
+' VRT-8: Use case diagram
+' Source of truth for diagrams/02-use-case.svg / .png
+left to right direction
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+
+title VeriTalk — Use Case Diagram
+
+actor "Phone user" as User
+actor "Family member" as Family
+actor "Device dialer" as Dialer <<system>>
+
+rectangle "VeriTalk" {
+  usecase "UC-1 Register and sign in" as UC1
+  usecase "UC-2 Give or withdraw consent\nto call analysis" as UC2
+  usecase "UC-3 Analyse an uploaded\ncall recording" as UC3
+  usecase "UC-4 Analyse a live call\non speakerphone" as UC4
+  usecase "UC-5 View risk report\n(score, indicators, evidence)" as UC5
+  usecase "UC-6 Receive live risk warning" as UC6
+  usecase "UC-7 Browse history\nof analysed calls" as UC7
+  usecase "UC-8 Delete a report\nor all personal data" as UC8
+  usecase "UC-9 Share a report\nwith a family member" as UC9
+  usecase "UC-10 View a shared report" as UC10
+}
+
+User --> UC1
+User --> UC2
+User --> UC3
+User --> UC4
+User --> UC7
+User --> UC8
+User --> UC9
+Dialer --> UC3 : provides recording
+
+UC3 ..> UC2 : <<include>>
+UC4 ..> UC2 : <<include>>
+UC3 ..> UC5 : <<include>>
+UC4 ..> UC6 : <<include>>
+UC4 ..> UC5 : <<include>>
+UC7 ..> UC5 : <<extend>>
+UC9 ..> UC5 : <<extend>>
+
+Family --> UC1
+Family --> UC10
+UC10 ..> UC5 : <<include>>
+@enduml

@@ -1,0 +1,59 @@
+@startuml component
+' VRT-8: Component diagram (DRAFT, C4 level 3 style)
+' Source of truth for diagrams/03-component.svg / .png
+!include <C4/C4_Component>
+
+title VeriTalk — Component Diagram (draft)
+
+Person(user, "Phone user")
+
+Container_Boundary(app, "Android app (Kotlin 2.4, Jetpack Compose)") {
+  Component(ui, "UI screens", "Jetpack Compose", "Upload, live analysis, report, history, consent, sharing")
+  Component(capture, "Live capture service", "Foreground service, AudioRecord", "Captures 16 kHz mono PCM from the microphone during a speakerphone call")
+  Component(importer, "Recording importer", "Share intent / file picker", "Receives recordings from the device dialer")
+  Component(client, "API client", "OkHttp, Retrofit", "HTTPS for uploads and reports, WebSocket for streaming")
+}
+
+Container_Boundary(server, "Analysis server (Python 3.14, FastAPI, Kubernetes)") {
+  Component(api, "API gateway", "FastAPI", "REST endpoints: auth, upload, reports, sharing, consent, deletion")
+  Component(stream, "Streaming handler", "FastAPI WebSocket", "Receives audio chunks, pushes updated risk results")
+  Component(auth, "Auth & consent", "JWT", "Accounts, tokens, consent records")
+  Component(pipeline, "Analysis pipeline", "Python worker", "Orchestrates VAD -> ASR -> risk scoring -> explanation; deletes audio when done")
+  Component(asr, "ASR service", "faster-whisper (CTranslate2), VAD", "Russian, Kazakh and code-switched transcription")
+  Component(risk, "Risk model service", "XLM-RoBERTa on ONNX Runtime", "Detects fraud indicators per segment and computes risk score 0-100")
+  Component(baseline, "Keyword baseline", "Rule list", "Indicator matching for evaluation comparison")
+  Component(explain, "Explanation builder", "Python", "Links each indicator to supporting transcript segments")
+}
+
+ContainerDb(db, "Report database", "PostgreSQL 18", "Users, consents, reports (score, indicators, segments). No audio")
+ContainerDb(tmp, "Temporary audio storage", "Ephemeral volume", "Audio kept only while a job runs")
+
+Container_Boundary(mlops, "Offline ML pipeline (not deployed with the app)") {
+  Component(data, "Corpus", "DVC", "Annotated RU/KZ transcripts and indicator taxonomy")
+  Component(train, "Training & evaluation", "PyTorch, Transformers, MLflow", "Fine-tuning, metrics, model registry, export to ONNX")
+}
+
+Rel(user, ui, "Uses")
+Rel(ui, importer, "Picks recording")
+Rel(ui, capture, "Starts / stops live analysis")
+Rel(importer, client, "Audio file")
+Rel(capture, client, "Audio chunks")
+Rel(ui, client, "Requests reports")
+Rel(client, api, "Upload, reports", "HTTPS/JSON")
+Rel(client, stream, "Audio up / risk updates down", "WebSocket")
+Rel(api, auth, "Checks token and consent")
+Rel(stream, auth, "Checks token and consent")
+Rel(api, pipeline, "Submits recording job")
+Rel(stream, pipeline, "Submits utterances")
+Rel(pipeline, tmp, "Writes / deletes audio")
+Rel(pipeline, asr, "Audio segments")
+Rel(pipeline, risk, "Transcript segments")
+Rel(pipeline, explain, "Indicators + segments")
+Rel(api, db, "Reads / writes reports")
+Rel(pipeline, db, "Saves report")
+Rel(train, data, "Reads")
+Rel(train, risk, "Publishes model version", "ONNX artifact")
+Rel(train, baseline, "Compares against")
+
+SHOW_LEGEND()
+@enduml

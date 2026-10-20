@@ -6,7 +6,7 @@
 
 ## I. Purpose and Method
 
-This document records the key technical decisions for the VeriTalk prototype. For each decision, two or three realistic alternatives are compared against project requirements, and one is chosen. Choices are justified by the requirements below, not by team preference.
+This document records the key technical decisions, consistent with the individual work plans approved by the supervisor, for the VeriTalk prototype. For each decision, two or three realistic alternatives are compared against project requirements, and one is chosen. Choices are justified by the requirements below, not by team preference.
 
 The driving requirements are taken from the proposal (`docs/01-proposal.md`) and the existing system comparison (`docs/04-existing-systems.md`):
 
@@ -16,7 +16,7 @@ The driving requirements are taken from the proposal (`docs/01-proposal.md`) and
 | D2 | Privacy by design: audio is deleted after analysis and is not sent to third parties | Proposal Scope, Assumption 1 |
 | D3 | Explainable output: risk score 0–100, detected indicators, supporting transcript segments | Proposal O3; Gap 3 |
 | D4 | Two modes: complete recording and near real-time streaming via speakerphone | Proposal O4; Gap 4 |
-| D5 | Device- and operator-independent access (any Android/iOS phone) | Gap 2 |
+| D5 | Device- and operator-independent access on Android, the platform targeted by the project (any Android phone, any operator) | Gap 2; supervisor-approved role plans |
 | D6 | Measurable quality against a keyword baseline with scarce labelled data | Proposal O1, O3, O6 |
 | D7 | Delivery by a three-person student team within one academic year, at near-zero cost | Project constraints |
 
@@ -24,15 +24,15 @@ Each alternative is rated against the relevant drivers: ✔ meets, ◐ partially
 
 ## II. Decision 1: Speech Recognition (ASR)
 
-| Criterion | A. Whisper (self-hosted, via faster-whisper) | B. Commercial cloud ASR (e.g., Google Cloud Speech-to-Text) | C. Kazakh-specific open model (trained on KSC2) |
+| Criterion | A. Whisper (self-hosted, via faster-whisper) | B. Commercial cloud ASR (e.g., Google Cloud Speech-to-Text) | C. wav2vec 2.0 / XLS-R fine-tuned on Kazakh and Russian (e.g., KSC2) |
 | --- | --- | --- | --- |
-| D1 Russian + Kazakh | ✔ one multilingual model covers both | ◐ both languages offered, but code-switching within one stream requires a fixed primary language | ◐ strong Kazakh, Russian depends on model; code-switching coverage per KSC2 |
+| D1 Russian + Kazakh | ✔ one multilingual model covers both | ◐ both languages offered, but code-switching within one stream requires a fixed primary language | ◐ strong after fine-tuning; needs separate training per language or a joint model |
 | D2 Audio stays on our server | ✔ | ✘ audio is sent to a third-party provider | ✔ |
-| D4 Streaming | ◐ not natively streaming; achievable with VAD-based chunking | ✔ native streaming API | ◐ depends on toolkit |
+| D4 Streaming | ◐ not natively streaming; achievable with VAD-based chunking | ✔ native streaming API | ✔ CTC models stream naturally |
 | D6 Can be adapted / measured | ✔ open weights, fine-tunable, WER measurable | ◐ limited adaptation, measurable | ✔ |
-| D7 Cost and effort | ✔ free, runs on one GPU; CPU int8 fallback | ✘ per-minute billing | ◐ less tooling and documentation |
+| D7 Cost and effort | ✔ free, runs on one GPU; CPU int8 fallback | ✘ per-minute billing | ◐ fine-tuning effort and labelled audio required |
 
-**Choice: A — Whisper, served with faster-whisper.** It is the only option that satisfies D1 and D2 together: one model handles both languages and mixed speech, and audio never leaves the project server. The missing native streaming (D4) is handled in the architecture by voice-activity-detection chunking (Decision 4). Option C remains a fallback if measured Kazakh WER (O2) is unacceptable; its weights can then be used to fine-tune or replace the Kazakh path.
+**Choice: A — Whisper, served with faster-whisper.** It is the only option that satisfies D1 and D2 together: one model handles both languages and mixed speech, and audio never leaves the project server. The missing native streaming (D4) is handled in the architecture by voice-activity-detection chunking (Decision 4). Option C remains the fallback if measured Kazakh WER (O2) is unacceptable on speakerphone audio; it is evaluated alongside Whisper during the baseline stage. For production, the selected model is exported to an optimised runtime (CTranslate2 for Whisper, ONNX Runtime for wav2vec 2.0) to meet the latency budget.
 
 ## III. Decision 2: Risk Assessment Model
 
@@ -62,22 +62,21 @@ Each alternative is rated against the relevant drivers: ✔ meets, ◐ partially
 | Criterion | A. WebSocket | B. gRPC bidirectional streaming | C. Repeated HTTP uploads of segments |
 | --- | --- | --- | --- |
 | D4 Continuous audio up, score updates down | ✔ full duplex on one connection | ✔ | ◐ polling for results, overhead per segment |
-| Mobile support (D5) | ✔ native in Flutter and both OSes | ◐ requires HTTP/2 and code generation; harder behind proxies | ✔ |
+| Mobile support (D5) | ✔ native on Android (OkHttp) | ◐ requires HTTP/2 and code generation; harder behind proxies | ✔ |
 | D7 Simplicity | ✔ | ◐ | ✔ |
 
 **Choice: A — WebSocket for streaming mode, plain HTTPS (multipart upload) for recording mode.** The client sends 16 kHz mono audio chunks; the server applies voice-activity detection, transcribes completed utterances, re-scores the conversation and pushes an updated `{score, indicators, segments}` message back. Recording mode uses a standard upload endpoint followed by polling or a single result response, which is simpler and sufficient for non-interactive analysis.
 
-## VI. Decision 5: Mobile Client Framework
+## VI. Decision 5: Mobile Client
 
-This decision belongs to the frontend area (Danial Seit) and is recorded here as a proposal for confirmation.
-
-| Criterion | A. Flutter | B. React Native | C. Native (Kotlin + Swift) |
+| Criterion | A. Native Android (Kotlin, Jetpack Compose) | B. Flutter | C. React Native |
 | --- | --- | --- | --- |
-| D5 Android and iOS from one codebase | ✔ | ✔ | ✘ two codebases |
-| Microphone capture of raw PCM for streaming (D4) | ✔ via plugins | ✔ via native modules | ✔ |
-| D7 Effort for one frontend developer | ✔ | ✔ | ✘ |
+| D5 Android, any device and operator | ✔ | ✔ | ✔ |
+| D4 Low-latency raw PCM capture from the microphone (`AudioRecord`) and a long-running foreground service during a call | ✔ direct platform API | ◐ through plugins / platform channels | ◐ through native modules |
+| Access to system integrations (share intent for recordings from the built-in dialer, notifications, permissions) | ✔ direct | ◐ via plugins | ◐ via native modules |
+| D7 Team skills (completed Native Mobile Development course; role defined in supervisor-approved plans) | ✔ | ◐ | ◐ |
 
-**Choice: A — Flutter (proposed).** Both cross-platform options meet D5 and D7; Flutter is preferred because a single rendering engine gives consistent UI for the usability tests (O6) across devices. If the frontend developer has stronger React Native experience, B is an equivalent choice and does not affect the server design.
+**Choice: A — native Android in Kotlin with Jetpack Compose.** Streaming analysis (D4) depends on continuous microphone capture in a foreground service while a speakerphone call is in progress, and on receiving recordings shared from the device dialer; both are platform features that Kotlin accesses directly, whereas the cross-platform options reach them only through an extra bridging layer. The project targets Android, where call recordings are produced by the pre-installed dialer (proposal, Scope), so the main advantage of B and C, a shared iOS build, does not apply. iOS support is out of scope for the prototype.
 
 ## VII. Decision 6: Data Storage
 
@@ -90,24 +89,36 @@ This decision belongs to the frontend area (Danial Seit) and is recorded here as
 
 **Choice: A — PostgreSQL.** Reports, users and consents are relational; indicator lists fit in JSONB without a second database. Audio is never written to the database: it is kept in a temporary directory only while a job runs and deleted when the job finishes, which directly implements D2. The annotated corpus (O1) is stored as versioned files outside the production database.
 
-## VIII. Chosen Stack
+## VIII. Decision 7: Deployment and Delivery
+
+| Criterion | A. Kubernetes with CI/CD (GitHub Actions) | B. Docker Compose on a single server | C. Managed PaaS / serverless |
+| --- | --- | --- | --- |
+| Separate scaling of API and GPU inference services | ✔ | ✘ one host | ◐ GPU support limited and costly |
+| D2 Data stays on infrastructure the team controls | ✔ | ✔ | ◐ provider-managed |
+| Reproducible delivery and rollback | ✔ declarative manifests, pipeline | ◐ manual | ✔ |
+| D7 Effort | ◐ higher; mitigated by a single-node cluster (e.g., k3s) | ✔ lowest | ◐ |
+
+**Choice: A — Kubernetes (single-node k3s for the prototype) with a GitHub Actions CI/CD pipeline; B is used for local development.** The ASR/risk inference and the API have different resource needs (GPU vs CPU) and must be deployed and scaled separately, which a single Compose host cannot do. Self-hosting keeps audio and transcripts on controlled infrastructure (D2). The same container images run under Docker Compose locally, so developers do not need a cluster.
+
+## IX. Chosen Stack
 
 | Layer | Technology |
 | --- | --- |
-| Mobile client | Flutter (proposed, to be confirmed by the frontend owner) |
+| Mobile client | Native Android: Kotlin, Jetpack Compose |
 | Transport | HTTPS (recording upload), WebSocket (streaming) |
 | Server API | Python 3.11+, FastAPI |
-| Speech recognition | Whisper via faster-whisper, with voice-activity detection |
-| Risk model | Fine-tuned XLM-RoBERTa indicator tagger + scoring; keyword baseline |
+| Speech recognition | Whisper via faster-whisper (CTranslate2), with voice-activity detection; wav2vec 2.0 as evaluated fallback |
+| Risk model | Fine-tuned XLM-RoBERTa indicator tagger + scoring, served with ONNX Runtime; keyword baseline |
+| ML tooling | PyTorch, Hugging Face Transformers, MLflow (experiments), DVC (data versioning) |
 | Data augmentation | Self-hosted open-weight LLM (offline only) |
 | Storage | PostgreSQL; temporary files for audio, deleted after analysis |
-| Deployment | Docker Compose on a single GPU server |
+| Deployment | Kubernetes (k3s) with GitHub Actions CI/CD; Docker Compose for local development |
 
-## IX. Risks and Items to Verify
+## X. Risks and Items to Verify
 
 1. **Kazakh WER.** Whisper's Kazakh accuracy may be insufficient on telephone-quality speakerphone audio. Mitigation: measure early on a small test set; fall back to or fine-tune with KSC2-based resources (Decision 1, option C).
 2. **Streaming latency.** Chunked Whisper adds delay per utterance. The latency threshold from the evaluation plan (VRT-10) must be checked on the target GPU; a smaller Whisper model is the fallback.
-3. **GPU memory.** ASR and the risk model must fit on one GPU together; the augmentation LLM runs offline only, not in production.
+3. **GPU memory.** ASR and the risk model must fit on the available GPU together; the augmentation LLM runs offline only, not in production.
 4. **Vendor details** (language coverage of cloud ASR, licence terms of model weights) must be re-checked before the final report.
 
 ## References

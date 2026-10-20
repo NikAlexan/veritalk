@@ -62,7 +62,7 @@ The team records responsibilities in a RASCI matrix, the form of responsibility 
 | 2 | Evidence of relevance, `docs/02-relevance-evidence.md` | VRT-3 | C | A/R | S | I | Oct. 21 |
 | 3 | Literature review, `docs/03-literature-review.md` | VRT-4 | A/R | I | C | C | Oct. 21 |
 | 4 | Existing system comparison, `docs/04-existing-systems.md` | VRT-5 | C | I | A/R | C | Done Oct. 19 |
-| 5 | Technology comparison, `docs/05-technology-comparison.md` | VRT-6 | A/R | C | C | C | In review |
+| 5 | Technology comparison, `docs/05-technology-comparison.md` | VRT-6 | A/R | C | C | C | Done Oct. 20 |
 | 6 | Requirements specification, `docs/06-requirements.md` | VRT-7 | A/R | C | S | C | Oct. 22 |
 | 7 | Architecture and diagrams, `docs/07-architecture.md` | VRT-8 | A/R | C | C | C | Done Oct. 20 |
 | 8 | UX / prototype, `prototype/` | VRT-9 | C | A/R | I | C | Oct. 22 |
@@ -168,7 +168,7 @@ Pre-defense 1 tasks depend on each other as recorded in YouTrack:
 - VRT-12 (supervisor review) needs the drafts of VRT-2 to VRT-9, and VRT-11 includes its outcome.
 - VRT-13 (submission) needs VRT-10 and VRT-11.
 
-The two overdue tasks, VRT-3 and VRT-6, sit at the start of this chain, so the team finishes them first.
+The overdue task VRT-3 sits at the start of this chain, so the team finishes it first.
 
 Implementation depends on the following order and external inputs:
 

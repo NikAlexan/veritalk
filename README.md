@@ -39,3 +39,16 @@ Group SE-2410, Astana IT University.
 **Excluded:** direct capture of call audio from the telephony stack, automatic call blocking, synthetic voice detection, integration with banking or operator systems.
 
 The full proposal is available in [docs/01-proposal.md](docs/01-proposal.md).
+
+## Current Status
+
+Pre-defense 1 stage: analysis and design. The repository contains documents and diagrams; application code starts after pre-defense 1. Milestones, owners and risks are listed in [docs/09-risks-and-management.md](docs/09-risks-and-management.md).
+
+## Project Links
+
+- YouTrack project: <https://veritalk.youtrack.cloud/issues/VRT>
+- [Project proposal](docs/01-proposal.md)
+- [Literature review](docs/03-literature-review.md)
+- [Existing system comparison](docs/04-existing-systems.md)
+- [Architecture description](docs/07-architecture.md) and [diagrams](diagrams/)
+- [Project management and risks](docs/09-risks-and-management.md)

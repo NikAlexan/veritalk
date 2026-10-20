@@ -39,3 +39,19 @@ Group SE-2410, Astana IT University.
 **Excluded:** direct capture of call audio from the telephony stack, automatic call blocking, synthetic voice detection, integration with banking or operator systems.
 
 The full proposal is available in [docs/01-proposal.md](docs/01-proposal.md).
+
+## Selected Technologies
+
+| Layer | Technology |
+| --- | --- |
+| Mobile client | Native Android: Kotlin 2.4, Jetpack Compose |
+| Transport | HTTPS (recording upload), WebSocket (streaming) |
+| Server API | Python 3.14, FastAPI |
+| Speech recognition | Whisper via faster-whisper (CTranslate2), with voice-activity detection; wav2vec 2.0 as evaluated fallback |
+| Risk model | Fine-tuned XLM-RoBERTa indicator tagger + scoring, served with ONNX Runtime; keyword baseline |
+| ML tooling | PyTorch, Hugging Face Transformers, MLflow (experiments), DVC (data versioning) |
+| Data augmentation | Self-hosted open-weight LLM (offline only) |
+| Storage | PostgreSQL 18; audio kept only in temporary files and deleted after analysis |
+| Deployment | Kubernetes (k3s) with GitHub Actions CI/CD; Docker Compose for local development |
+
+The rationale for each choice is given in [docs/05-technology-comparison.md](docs/05-technology-comparison.md).

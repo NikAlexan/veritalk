@@ -1,7 +1,7 @@
 # Evidence of the Relevance
 
 ## I. Overview
-To ensure the VeriTalk application addresses real user needs and to inform the requirements specification, the team conducted semi-structured interviews with 6 target users between October 18 and 20, 2026. All participants are university students, representing a demographic that is technically literate, actively receives calls from unknown numbers, and frequently assists older relatives with digital security.
+To ensure the VeriTalk application addresses real user needs and to inform the requirements specification, the team conducted semi-structured interviews with 6 target users between October 18 and 21, 2026. All participants are university students, representing a demographic that is technically literate, actively receives calls from unknown numbers, and frequently assists older relatives with digital security.
 
 This document synthesizes the findings, distinguishes verified user statements from the team's working assumptions, and corroborates these findings with external literature. The interview notes are available in `docs/evidence/interview-notes.md`.
 

@@ -1,7 +1,7 @@
 # Raw Interview Notes
 
 **Project:** VeriTalk
-**Methodology:** Semi-structured interviews conducted between Oct 18 and Oct 20, 2026.
+**Methodology:** Semi-structured interviews conducted between Oct 18 and Oct 21, 2026.
 **Objective:** Understand current fraud defense mechanisms, pain points, and user expectations for an AI-based risk assessment tool.
 
 ## Interview Questions Prepared

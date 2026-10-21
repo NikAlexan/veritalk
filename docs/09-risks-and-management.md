@@ -2,7 +2,7 @@
 
 **Project:** VeriTalk. Development of an Application for Assessing the Risk of Phone Conversations Using Artificial Intelligence
 **Task:** VRT-11 Project management and risks
-**Date:** Oct. 20, 2026
+**Date:** Oct. 20, 2026 (statuses updated Oct. 21, 2026)
 **Status:** Draft for pre-defense 1
 
 ## I. Management Approach
@@ -59,17 +59,18 @@ The team records responsibilities in a RASCI matrix, the form of responsibility 
 | # | Deliverable | YouTrack | Nikita | Danial | Abilkaiyr | Supervisor | Due |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | 1 | Project proposal, `docs/01-proposal.md` | VRT-2 | S | A/R | S | C | Done Oct. 18 |
-| 2 | Evidence of relevance, `docs/02-relevance-evidence.md` | VRT-3 | C | A/R | S | I | Oct. 21 |
-| 3 | Literature review, `docs/03-literature-review.md` | VRT-4 | A/R | I | C | C | Oct. 21 |
+| 2 | Evidence of relevance, `docs/02-relevance-evidence.md` | VRT-3 | C | A/R | S | I | Done Oct. 21 |
+| 3 | Literature review, `docs/03-literature-review.md` | VRT-4 | A/R | I | C | C | Done Oct. 20 |
 | 4 | Existing system comparison, `docs/04-existing-systems.md` | VRT-5 | C | I | A/R | C | Done Oct. 19 |
 | 5 | Technology comparison, `docs/05-technology-comparison.md` | VRT-6 | A/R | C | C | C | Done Oct. 20 |
-| 6 | Requirements specification, `docs/06-requirements.md` | VRT-7 | A/R | C | S | C | Oct. 22 |
+| 6 | Requirements specification, `docs/06-requirements.md` | VRT-7 | A/R | C | S | C | Done Oct. 21 |
 | 7 | Architecture and diagrams, `docs/07-architecture.md` | VRT-8 | A/R | C | C | C | Done Oct. 20 |
 | 8 | UX / prototype, `prototype/` | VRT-9 | C | A/R | I | C | Oct. 22 |
 | 9 | Verification and evaluation plan, `docs/08-verification-plan.md` | VRT-10 | S | C | A/R | C | Oct. 24 |
 | 10 | Project management and risks, this document | VRT-11 | A/R | S | C | C | Oct. 24 |
 | 11 | Supervisor feedback, `docs/10-supervisor-feedback.md` | VRT-12 | S | A/R | S | C | Oct. 23 |
 | 12 | Submission: tag `pre-defense-1` and summary | VRT-13 | A/R | S | S | I | Oct. 24, 18:00 |
+| 13 | Consistency fixes across 02, 04, 07, 09 and the interview notes | VRT-17 | C | A/R | C | I | Oct. 23 |
 
 Abilkaiyr supports VRT-7 by writing the measurable requirements for the risk model, which he reuses in VRT-10. Danial supports VRT-11 as the project manager who runs the risk register.
 
@@ -168,7 +169,7 @@ Pre-defense 1 tasks depend on each other as recorded in YouTrack:
 - VRT-12 (supervisor review) needs the drafts of VRT-2 to VRT-9, and VRT-11 includes its outcome.
 - VRT-13 (submission) needs VRT-10 and VRT-11.
 
-The overdue task VRT-3 sits at the start of this chain, so the team finishes it first.
+VRT-3 sat at the start of this chain and slipped from its first due date; it was completed on Oct. 21, which unblocked VRT-7.
 
 Implementation depends on the following order and external inputs:
 

@@ -33,9 +33,15 @@ Based on the evidence gathered from these interviews and supported by the litera
 
 ## IV. References
 [1] D. Pokidaev, "Kazakhstan blocked nearly 85 million fraudulent phone calls in 2025," *The Times of Central Asia*, Jan. 12, 2026. 
-[2] "«Рекордное количество». Сколько случаев мошенничества в сети зарегистрировали в Казахстане в 2025 году," *Informburo.kz*, Dec. 31, 2025. 
+
+[2] "«Рекордное количество». Сколько случаев мошенничества в сети зарегистрировали в Казахстане в 2025 году," *Informburo.kz*, Dec. 31, 2025.
+
 [3] D. Pokidaev, "Kazakhstan to hold banks and mobile operators liable for online fraud losses," *The Times of Central Asia*, Jun. 24, 2025. 
+
 [4] Z. Shen et al., "Combating phone scams with LLM-based detection: Where do we stand?" 2024, *arXiv:2409.11643*.
+
 [5] Z. Shen et al., "'It warned me just at the right moment': Exploring LLM-based real-time detection of phone scams," 2025, *arXiv:2502.03964*.
+
 [6] Y. Khassanov et al., "A crowdsourced open-source Kazakh speech corpus and initial speech recognition baseline," in *Proc. 16th Conf. Eur. Chapter Assoc. Comput. Linguistics (EACL)*, 2021, pp. 697–706.
+
 [7] S. Mussakhojayeva, Y. Khassanov, and H. A. Varol, "KSC2: An industrial-scale open-source Kazakh speech corpus," in *Proc. Interspeech*, 2022, pp. 1367–1371.

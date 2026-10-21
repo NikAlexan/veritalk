@@ -47,18 +47,18 @@ Exports are regenerated with `java -jar plantuml.jar -tsvg -tpng diagrams/*.puml
 
 ![Use case diagram](../diagrams/02-use-case.png)
 
-| ID | Use case | Primary actor | Proposal objective |
-| --- | --- | --- | --- |
-| UC-1 | Manage consent to call analysis | Phone user | Scope (privacy) |
-| UC-2 | Analyse a recorded call | Phone user (secondary: phone dialer) | O4, O5 |
-| UC-3 | Analyse a live call on speakerphone | Phone user | O4, O5 |
-| UC-4 | Warn about high risk during a live call | — (extends UC-3 when the score reaches the warning threshold) | O4 |
-| UC-5 | View a risk report | Phone user | O3, O5 |
-| UC-6 | Delete reports and personal data | Phone user | Scope (privacy) |
-| UC-7 | Share a risk report | Phone user | Target Users |
-| UC-8 | View a shared risk report | Family member | Target Users |
+| ID | Use case | Primary actor | Proposal objective | Requirements |
+| --- | --- | --- | --- | --- |
+| UC-1 | Manage consent to call analysis | Phone user | Scope (privacy) | FR-1–FR-3 |
+| UC-2 | Analyse a recorded call | Phone user (secondary: phone dialer) | O4, O5 | FR-4 |
+| UC-3 | Analyse a live call on speakerphone | Phone user | O4, O5 | FR-5, FR-6 |
+| UC-4 | Warn about high risk during a live call | — (extends UC-3 when the score reaches the warning threshold) | O4 | FR-7 |
+| UC-5 | View a risk report | Phone user | O3, O5 | FR-9–FR-11, FR-15, FR-16 |
+| UC-6 | Delete reports and personal data | Phone user | Scope (privacy) | FR-17 |
+| UC-7 | Share a risk report | Phone user | Target Users | FR-19 |
+| UC-8 | View a shared risk report | Family member | Target Users | FR-20 |
 
-Preconditions common to all use cases: the actor is signed in. UC-2 and UC-3 additionally require consent recorded through UC-1. The functional requirements in VRT-7 will be derived from these use cases.
+Preconditions common to all use cases: the actor is signed in (FR-21). UC-2 and UC-3 additionally require consent recorded through UC-1. The requirements column follows the coverage check in [06-requirements.md](06-requirements.md), Section X.
 
 ## V. Containers
 
@@ -140,10 +140,9 @@ The server runs on a single-node Kubernetes cluster (k3s) with separate deployme
 
 ## XI. Open Points
 
-1. **Requirements mapping.** Functional requirements (VRT-7) will be derived from UC-1–UC-8; this document will then reference FR/NFR IDs instead of proposal objectives.
-2. **Family member access.** Whether the family member uses the app with their own account (as assumed) or a read-only link must be confirmed by user interviews (VRT-3).
-3. **Warning threshold and latency budget** are set in the verification and evaluation plan (VRT-10).
-4. **Job queue.** The draft uses an in-process worker; a dedicated queue will be added if load testing shows it is needed.
+1. **Family member access.** The interviews (VRT-3) did not settle whether the family member uses the app with their own account (as assumed) or a read-only link. This is recorded as assumption A1 in [06-requirements.md](06-requirements.md); FR-19 and FR-20 stay Should until a follow-up question confirms it.
+2. **Warning threshold and latency budget** are set in the verification and evaluation plan (VRT-10). The requirements use preliminary values: a threshold of 70 (FR-7) and a p95 update latency of 5 s (NFR-1).
+3. **Job queue.** The draft uses an in-process worker; a dedicated queue will be added if load testing shows it is needed (NFR-3).
 
 ## References
 

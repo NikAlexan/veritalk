@@ -26,7 +26,7 @@ This document separates three kinds of statements:
 | S5 | University student | 2026-10-20 |
 | S6 | University student | 2026-10-21 |
 
-Participants are referred to by codes. Names are kept only in the raw notes, with the participants' agreement.
+Participants are referred to by codes. Names are not stored in the repository.
 
 ## III. Findings
 

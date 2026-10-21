@@ -4,12 +4,13 @@
 **Methodology:** Semi-structured interviews conducted between Oct 18 and Oct 21, 2026.
 **Objective:** Understand current fraud defense mechanisms, pain points, and user expectations for an AI-based risk assessment tool.
 **Questions:** see [00-interview-guide.md](00-interview-guide.md).
+**Participants:** referred to by codes S1–S6. Names are not stored in the repository.
 
 ---
 
 ## Session 1
 * **Date:** 2026-10-18
-* **Participant:** Tassimov Arsen
+* **Participant:** S1
 * **Role:** University Student
 * **Key Points:**
   * Gets scam calls 1-2 times a month, but his parents get them weekly.
@@ -20,7 +21,7 @@
 
 ## Session 2
 * **Date:** 2026-10-19
-* **Participant:** Erkebulan Zhan
+* **Participant:** S2
 * **Role:** University Student
 * **Key Points:**
   * Frequently receives calls from "bank security" speaking Russian and sometimes switching to Kazakh.
@@ -31,7 +32,7 @@
 
 ## Session 3
 * **Date:** 2026-10-19
-* **Participant:** Zalel Mansur
+* **Participant:** S3
 * **Role:** University Student
 * **Key Points:**
   * Almost fell victim to a scam during exam week because he was stressed and the caller knew his full name.
@@ -42,7 +43,7 @@
 
 ## Session 4
 * **Date:** 2026-10-20
-* **Participant:** Kenzhegaliev Ali
+* **Participant:** S4
 * **Role:** IT Operator
 * **Key Points:**
   * Refuses to use Truecaller or GetContact due to contact-book harvesting. 
@@ -52,7 +53,7 @@
 
 ## Session 5
 * **Date:** 2026-10-20
-* **Participant:** Rauan Ali
+* **Participant:** S5
 * **Role:** University Student
 * **Key Points:**
   * Gets spam calls often and usually ignores unknown numbers.
@@ -62,7 +63,7 @@
 
 ## Session 6
 * **Date:** 2026-10-21
-* **Participant:** Ermek Tairhan
+* **Participant:** S6
 * **Role:** University Student
 * **Key Points:**
   * Mentioned a specific case where a scammer started in Kazakh to build trust, then switched to Russian for "technical banking terms".

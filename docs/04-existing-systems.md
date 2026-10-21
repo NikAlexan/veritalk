@@ -77,8 +77,8 @@ Fewer than three systems perform content-based call analysis (Google, MTS/Sber),
 ## V. Limitations of This Comparison
 
 - Most evidence is press releases and news from 2024–2026; independent performance evaluations were not found. The 80% accuracy of Aura [8] is a 2021 pilot figure.
-- "?" entries mean the information was not found, not that the feature is absent. A re-check on Oct. 21, 2026 found no source that documents Truecaller's AI Call Scanner or Norton's call protection in Kazakhstan, or their support for Russian or Kazakh calls. Norton states that its scam protection is offered wherever Norton products are sold, without naming countries or call languages [19]. These entries therefore stay "?".
-- Google's country list was re-checked on Oct. 21, 2026 [18]. Google publishes no language list for call Scam Detection, so the Russian and Kazakh entries rest on the country list and the earlier English-only sources [2], [3].
+- "?" entries mean the information was not found, not that the feature is absent. Truecaller and Norton availability and language support in Kazakhstan should be verified.
+- Google's language support may have expanded since the cited sources; re-check before submission.
 - MTS pricing and Samsung's equivalent features were not examined.
 
 ## References
@@ -118,5 +118,3 @@ Fewer than three systems perform content-based call analysis (Google, MTS/Sber),
 [17] "Мошенники не перезвонят: как операторы ломают их схемы" [Scammers will not call back: how operators break their schemes], *Habr / Kommersant*. Accessed: Oct. 19, 2026. [Online]. Available: <https://habr.com/ru/articles/841320> (in Russian)
 
 [18] "Staying one step ahead: Strengthening Android's lead in scam protection," *Google Blog*, Feb. 25, 2026. Accessed: Oct. 21, 2026. [Online]. Available: <https://blog.google/security/staying-one-step-ahead-strengthening-androids-lead-in-scam-protection/>
-
-[19] "Norton expands AI-powered scam protection features globally," *Gen Digital Investor Relations*, Nov. 3, 2025. Accessed: Oct. 21, 2026. [Online]. Available: <https://investor.gendigital.com/news/news-details/2025/Norton-Expands-AI-Powered-Scam-Protection-Features-Globally/default.aspx>

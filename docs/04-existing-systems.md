@@ -2,7 +2,7 @@
 
 **Project:** VeriTalk — Development of an Application for Assessing the Risk of Phone Conversations Using Artificial Intelligence
 **Task:** VRT-5 Existing system comparison
-**Accessed:** Oct. 19, 2026
+**Accessed:** Oct. 19, 2026 (availability re-checked Oct. 21, 2026)
 
 ## I. Purpose and Method
 
@@ -22,7 +22,7 @@ Academic LLM-based detectors [15], [16] are discussed separately as the research
 
 ### A. Google Scam Detection
 
-Scam Detection in the Phone by Google app listens for conversation patterns commonly associated with scams, then alerts the user with an audio and haptic cue and a visual "Likely scam" warning with an option to end the call [2]. Processing is on-device: Gemini Nano on Pixel 9 and newer, smaller on-device models on Pixel 6–8a [1]. Google states that no audio or transcript is stored or sent off the device [2]. The feature is off by default and applies only to calls from unknown numbers [1]. At launch it supported English in the U.S. [2]; the India rollout in November 2025 is limited to Pixel 9+ and English [3].
+Scam Detection in the Phone by Google app listens for conversation patterns commonly associated with scams, then alerts the user with an audio and haptic cue and a visual "Likely scam" warning with an option to end the call [2]. Processing is on-device: Gemini Nano on Pixel 9 and newer, smaller on-device models on Pixel 6–8a [1]. Google states that no audio or transcript is stored or sent off the device [2]. The feature is off by default and applies only to calls from unknown numbers [1]. At launch it supported English in the U.S. [2]; the India rollout in November 2025 is limited to Pixel 9+ and English [3]. As of February 2026, Scam Detection for calls is available in 12 countries (the US, UK, Australia, Canada, France, Germany, India, Ireland, Italy, Japan, Mexico and Spain); Kazakhstan and Russia are not among them, and Google does not list the supported call languages [18].
 
 ### B. Truecaller
 
@@ -50,7 +50,7 @@ Legend: ✔ supported, ◐ partial, ✘ not supported, ? not found in sources, n
 
 **TABLE I. Comparison of existing systems and VeriTalk**
 
-| # | Criterion | Google Scam Detection [1]–[3] | Truecaller [4]–[6] | MTS / Sber Aura [7]–[9] | Kazakhtelecom / Kcell [10]–[12] | Norton Genie [13], [14] | VeriTalk (planned) |
+| # | Criterion | Google Scam Detection [1]–[3], [18] | Truecaller [4]–[6] | MTS / Sber Aura [7]–[9] | Kazakhtelecom / Kcell [10]–[12] | Norton Genie [13], [14] | VeriTalk (planned) |
 |---|---|---|---|---|---|---|---|
 | C1 | Analyses conversation content | ✔ | ✘ (number reputation, AI-voice detection) | ✔ (claimed) | ✘ (signatures, metadata) | ◐ (SMS text only) | ✔ |
 | C2 | Operating mode | Real time | During call (scanner), call screening | Real time | Before connection, in network | User-initiated | Real time + uploaded recording |
@@ -60,7 +60,7 @@ Legend: ✔ supported, ◐ partial, ✘ not supported, ? not found in sources, n
 | C6 | Explainability (indicators + evidence) | ◐ (warning label, no breakdown documented) | ✘ | ✘ (voice warning) | ✘ | ◐ (general guidance) | ✔ |
 | C7 | Privacy / data handling | ✔ on-device, nothing stored | ◐ scanner analyses recorded call audio | ◐ processed by operator | n/a | ? | ✔ audio deleted after analysis |
 | C8 | Cost model | Phone app feature, no separate fee stated | Premium subscription | Operator service | No user action | Subscription | Not yet defined |
-| C9 | Main limitation | English only, Pixel only | Does not assess what is said | Operator lock-in, closed model, no Kazakh | Cannot see call content | Call protection is number-based | Small data, prototype stage |
+| C9 | Main limitation | Pixel only; not offered in Kazakhstan | Does not assess what is said | Operator lock-in, closed model, no Kazakh | Cannot see call content | Call protection is number-based | Small data, prototype stage |
 
 ## IV. Gap Analysis
 
@@ -116,3 +116,5 @@ Fewer than three systems perform content-based call analysis (Google, MTS/Sber),
 [16] Z. Shen, S. Yan, Y. Zhang, X. Luo, G. Ngai, and E. Y. Fu, "'It warned me just at the right moment': Exploring LLM-based real-time detection of phone scams," 2025, *arXiv:2502.03964*.
 
 [17] "Мошенники не перезвонят: как операторы ломают их схемы" [Scammers will not call back: how operators break their schemes], *Habr / Kommersant*. Accessed: Oct. 19, 2026. [Online]. Available: <https://habr.com/ru/articles/841320> (in Russian)
+
+[18] "Staying one step ahead: Strengthening Android's lead in scam protection," *Google Blog*, Feb. 25, 2026. Accessed: Oct. 21, 2026. [Online]. Available: <https://blog.google/security/staying-one-step-ahead-strengthening-androids-lead-in-scam-protection/>

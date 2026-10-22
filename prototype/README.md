@@ -3,7 +3,13 @@
 **Task:** VRT-9 UX / prototype
 **Depends on:** VRT-8 ([docs/07-architecture.md](../docs/07-architecture.md))
 
-A clickable mockup of the key user scenarios. It is a single self-contained file with no installation and no server: open [`index.html`](index.html) in any browser. All data (transcript, scores, indicators) is illustrative and is not produced by a model.
+A clickable mockup of the key user scenarios. There is no installation and no server: open [`index.html`](index.html) in any browser, keeping it in the same folder as [`style.css`](style.css) and [`app.js`](app.js). All data (transcript, scores, indicators) is illustrative and is not produced by a model.
+
+| File | Contents |
+| --- | --- |
+| `index.html` | Page skeleton: sidebar, phone frame, API caption |
+| `style.css` | Layout and components |
+| `app.js` | Sample data, one function per screen, and the actions behind the buttons |
 
 ## How to use
 
@@ -17,13 +23,13 @@ A clickable mockup of the key user scenarios. It is a single self-contained file
 | Use case | Where in the prototype | API call (illustrative) |
 | --- | --- | --- |
 | UC-1 Manage consent | First screen, and Settings | `PUT /v1/consents` |
-| UC-2 Analyse a recorded call | Home → Analyse a recorded call → pick a file → progress → report | `POST /v1/recordings`, `GET /v1/jobs/{id}` |
+| UC-2 Analyse a recorded call | Home → Analyse a recorded call → pick a file → progress → report. The second file shows the failure path ("No speech detected"); **Cancel** stops the analysis | `POST /v1/recordings`, `GET /v1/jobs/{id}` |
 | UC-3 Analyse a live call | Home → Live call → Start listening | `WS /v1/live` |
-| UC-4 Warn about high risk | Live screen: red warning appears when the score reaches the threshold (70 here) | pushed over the WebSocket (`warning: true`) |
-| UC-5 View a risk report | Report screen: score, indicators, tap an indicator to see evidence | `GET /v1/reports/{id}` |
-| UC-6 Delete reports and data | Settings → Delete all reports and personal data | `DELETE /v1/reports` |
-| UC-7 Share a risk report | Report → Share with a family member (add and revoke) | `POST /v1/reports/{id}/shares` |
-| UC-8 View a shared report | Switch role to Family member | `GET /v1/shared-reports` |
+| UC-4 Warn about high risk | Live screen: a full-screen red warning with the reason appears once per call when the score reaches the threshold (70 here) | pushed over the WebSocket (`warning: true`) |
+| UC-5 View a risk report | Report screen: score, indicators, tap an indicator to see its evidence with start and end time and the trigger phrase highlighted | `GET /v1/reports/{id}` |
+| UC-6 Delete reports and data | Report → Delete this report, or Settings → Delete all reports and personal data | `DELETE /v1/reports/{id}`, `DELETE /v1/reports` |
+| UC-7 Share a risk report | Report → Share with a family member (add and revoke). Only saved reports can be shared | `POST /v1/reports/{id}/shares` |
+| UC-8 View a shared report | Switch role to Family member | `GET /v1/shared-reports`, `GET /v1/shared-reports/{id}` |
 
 ## Example API data
 
@@ -96,12 +102,14 @@ When the user stops, the server sends `{ "type": "final", "report_id": 2 }` and 
 ## Design decisions
 
 - **Explainability first.** The report shows indicators with confidence, and each one expands to the transcript segments that support it (proposal O3).
-- **Advisory only.** The warning text tells the user what was detected; the app never blocks or ends calls (proposal, Exclusion 2).
+- **Advisory only.** The warning covers the whole screen, states the reason in large text and suggests what to do (FR-8); the app never blocks or ends calls (proposal, Exclusion 2).
 - **Consent gate.** UC-2 and UC-3 are blocked without consent from UC-1, and an unconsented analysis returns `403`.
-- **Privacy visible in the UI.** Audio deletion is stated on the processing screen and on the live screen; the report can be kept or discarded depending on the "Save reports" consent.
+- **Privacy visible in the UI.** "Audio deleted" is confirmed after every analysis: on the report after a recording or a live call, on the error screen after a failure, and in a message after a cancel (FR-14). Without the "Save reports" consent the report is shown once, cannot be shared and is not kept (FR-15).
 - **Code-switching.** The sample transcript mixes Russian and Kazakh in one sentence to show the target case.
 
 ## Not covered
 
 - Authentication and sign-in screens (a precondition in the architecture, not a user goal).
+- Interface language. The screens are in English so that the committee can read them. The Android client is built in Russian (FR-22) and Kazakh (FR-23); the transcript examples are already in Russian and Kazakh.
+- The final indicator taxonomy. The indicator names are placeholders until the corpus work defines the taxonomy ([06-requirements.md](../docs/06-requirements.md), Open Point 4).
 - Real model output, real audio capture, and the final visual design. The Android client will use Jetpack Compose, and this mockup only fixes the flow and content.

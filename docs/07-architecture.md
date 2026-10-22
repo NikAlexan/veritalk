@@ -58,7 +58,7 @@ Exports are regenerated with `java -jar plantuml.jar -tsvg -tpng diagrams/*.puml
 | UC-7 | Share a risk report | Phone user | Target Users | FR-19 |
 | UC-8 | View a shared risk report | Family member | Target Users | FR-20 |
 
-Preconditions common to all use cases: the actor is signed in (FR-21). UC-2 and UC-3 additionally require consent recorded through UC-1. The requirements column follows the coverage check in [06-requirements.md](06-requirements.md), Section X.
+Preconditions common to all use cases: the actor is signed in (FR-21). UC-2 and UC-3 additionally require consent recorded through UC-1. The requirements column follows the coverage check in [06-requirements.md](06-requirements.md), Section X. Every use case is shown in the clickable prototype ([../prototype/](../prototype/)).
 
 ## V. Containers
 

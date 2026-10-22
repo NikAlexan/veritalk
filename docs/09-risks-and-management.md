@@ -65,7 +65,7 @@ The team records responsibilities in a RASCI matrix, the form of responsibility 
 | 5 | Technology comparison, `docs/05-technology-comparison.md` | VRT-6 | A/R | C | C | C | Done Oct. 20 |
 | 6 | Requirements specification, `docs/06-requirements.md` | VRT-7 | A/R | C | S | C | Done Oct. 21 |
 | 7 | Architecture and diagrams, `docs/07-architecture.md` | VRT-8 | A/R | C | C | C | Done Oct. 20 |
-| 8 | UX / prototype, `prototype/` | VRT-9 | C | A/R | I | C | Oct. 22 |
+| 8 | UX / prototype, `prototype/` | VRT-9 | C | A/R | I | C | Done Oct. 22 |
 | 9 | Verification and evaluation plan, `docs/08-verification-plan.md` | VRT-10 | S | C | A/R | C | Oct. 24 |
 | 10 | Project management and risks, this document | VRT-11 | A/R | S | C | C | Oct. 24 |
 | 11 | Supervisor feedback, `docs/10-supervisor-feedback.md` | VRT-12 | S | A/R | S | C | Oct. 23 |

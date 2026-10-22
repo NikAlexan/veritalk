@@ -1,8 +1,8 @@
 const INDICATORS = {
-  authority: { label: 'Authority impersonation', confidence: 0.93 },
-  urgency: { label: 'Urgency and threats', confidence: 0.88 },
-  otp: { label: 'Request for a one-time code', confidence: 0.96 },
-  secrecy: { label: 'Demand for secrecy', confidence: 0.81 },
+  authority: { label: 'Выдаёт себя за официальное лицо', confidence: 0.93 },
+  urgency: { label: 'Срочность и угрозы', confidence: 0.88 },
+  otp: { label: 'Просит одноразовый код', confidence: 0.96 },
+  secrecy: { label: 'Требует сохранять тайну', confidence: 0.81 },
 };
 
 const TRANSCRIPT = [
@@ -51,22 +51,22 @@ const TRANSCRIPT = [
 const WARNING_THRESHOLD = 70;
 
 const ANALYSIS_STEPS = [
-  'Uploading recording',
-  'Detecting speech (VAD)',
-  'Transcribing (RU / KK)',
-  'Scoring indicators',
-  'Building explanation',
+  'Загрузка записи',
+  'Поиск речи (VAD)',
+  'Распознавание речи (рус. / каз.)',
+  'Оценка индикаторов',
+  'Формирование объяснения',
 ];
 
 const USE_CASES = [
-  { id: 'UC-1', title: 'Manage consent', screen: 'consent', role: 'user' },
-  { id: 'UC-2', title: 'Analyse a recorded call', screen: 'upload', role: 'user' },
-  { id: 'UC-3', title: 'Analyse a live call', screen: 'live', role: 'user' },
-  { id: 'UC-4', title: 'Warn about high risk (live)', screen: 'live', role: 'user' },
-  { id: 'UC-5', title: 'View a risk report', screen: 'report', role: 'user' },
-  { id: 'UC-6', title: 'Delete reports and data', screen: 'settings', role: 'user' },
-  { id: 'UC-7', title: 'Share a risk report', screen: 'share', role: 'user' },
-  { id: 'UC-8', title: 'View a shared report (family)', screen: 'sharedWithMe', role: 'family' },
+  { id: 'UC-1', title: 'Согласие на анализ', screen: 'consent', role: 'user' },
+  { id: 'UC-2', title: 'Анализ записи звонка', screen: 'upload', role: 'user' },
+  { id: 'UC-3', title: 'Анализ звонка в реальном времени', screen: 'live', role: 'user' },
+  { id: 'UC-4', title: 'Предупреждение о высоком риске', screen: 'live', role: 'user' },
+  { id: 'UC-5', title: 'Просмотр отчёта о риске', screen: 'report', role: 'user' },
+  { id: 'UC-6', title: 'Удаление отчётов и данных', screen: 'settings', role: 'user' },
+  { id: 'UC-7', title: 'Отправка отчёта родственнику', screen: 'share', role: 'user' },
+  { id: 'UC-8', title: 'Просмотр общего отчёта (родственник)', screen: 'sharedWithMe', role: 'family' },
 ];
 
 const API_CALLS = {
@@ -91,9 +91,9 @@ function riskColor(score) {
 }
 
 function riskLevel(score) {
-  if (score >= 70) return 'High risk';
-  if (score >= 40) return 'Medium risk';
-  return 'Low risk';
+  if (score >= 70) return 'Высокий риск';
+  if (score >= 40) return 'Средний риск';
+  return 'Низкий риск';
 }
 
 function formatTime(seconds) {
@@ -105,7 +105,7 @@ function highlight(segment) {
 }
 
 function modeLabel(report) {
-  return report.mode === 'live' ? 'Live call' : 'Recorded call';
+  return report.mode === 'live' ? 'Живой анализ' : 'Запись звонка';
 }
 
 function createReport(mode, id) {
@@ -113,9 +113,9 @@ function createReport(mode, id) {
     id,
     mode,
     score: 91,
-    date: 'Oct 19, 14:02',
+    date: '19 окт., 14:02',
     segments: TRANSCRIPT,
-    sharedWith: mode === 'recording' ? ['Family member'] : [],
+    sharedWith: mode === 'recording' ? ['Родственник'] : [],
   };
 }
 
@@ -167,8 +167,8 @@ function bottomNav() {
   const onSettings = state.screen === 'settings';
   return `
     <div class="bottom-nav">
-      <button class="${onSettings ? '' : 'on'}" data-action="navigate" data-value="home">Home</button>
-      <button class="${onSettings ? 'on' : ''}" data-action="navigate" data-value="settings">Settings</button>
+      <button class="${onSettings ? '' : 'on'}" data-action="navigate" data-value="home">Главная</button>
+      <button class="${onSettings ? 'on' : ''}" data-action="navigate" data-value="settings">Настройки</button>
     </div>`;
 }
 
@@ -203,66 +203,66 @@ function confirmDialog(title, text) {
       <div>
         <b>${title}</b>
         <p>${text}</p>
-        <button class="btn danger" data-action="confirmDelete">Delete</button>
-        <button class="btn secondary" data-action="cancelDelete">Cancel</button>
+        <button class="btn danger" data-action="confirmDelete">Удалить</button>
+        <button class="btn secondary" data-action="cancelDelete">Отмена</button>
       </div>
     </div>`;
 }
 
 function consentRequiredScreen() {
   return `
-    ${topBar('Consent required', 'UC-1')}
+    ${topBar('Нужно согласие', 'UC-1')}
     <div class="content">
-      <h3>Analysis is off</h3>
-      <p>VeriTalk cannot analyse calls until you give consent. Nothing was uploaded.</p>
-      <button class="btn" data-action="navigate" data-value="consent">Open consent</button>
+      <h3>Анализ выключен</h3>
+      <p>VeriTalk не может анализировать звонки без вашего согласия. Ничего не было отправлено.</p>
+      <button class="btn" data-action="navigate" data-value="consent">Открыть согласие</button>
     </div>`;
 }
 
 function highRiskWarning(score) {
   return `
     <div class="alert">
-      <b>UC-4 · High risk · ${score}/100</b>
-      <h2>This looks like a scam</h2>
+      <b>UC-4 · Высокий риск · ${score}/100</b>
+      <h2>Похоже на мошенничество</h2>
       <div class="alert-reason">
-        The caller is asking for a code from an SMS. A real bank never asks for it.
+        Собеседник просит код из SMS. Настоящий банк никогда его не спрашивает.
       </div>
       <div class="alert-advice">
-        Do not share codes or transfer money. You can end the call and phone the
-        bank on the number on your card.
+        Не называйте коды и не переводите деньги. Можно завершить звонок и
+        перезвонить в банк по номеру на карте.
       </div>
-      <button data-action="dismissWarning">I understand</button>
+      <button data-action="dismissWarning">Понятно</button>
     </div>`;
 }
 
 const screens = {
   consent: () => `
-    ${topBar('Before we start', 'UC-1')}
+    ${topBar('Прежде чем начать', 'UC-1')}
     <div class="content">
       <p>
-        VeriTalk analyses the <b>content</b> of a call on our server. Audio is
-        deleted as soon as the analysis ends. Only the report is kept, and only
-        if you allow it.
+        VeriTalk анализирует <b>содержание</b> звонка на нашем сервере. Аудио
+        удаляется сразу после окончания анализа. Сохраняется только отчёт,
+        и только если вы это разрешите.
       </p>
-      ${consentToggle('analysis', 'Allow call analysis (required)')}
-      ${consentToggle('storage', 'Save reports to my account')}
+      ${consentToggle('analysis', 'Разрешить анализ звонков (обязательно)')}
+      ${consentToggle('storage', 'Сохранять отчёты в моём аккаунте')}
       <button class="btn" data-action="navigate" data-value="home" ${state.consent.analysis ? '' : 'disabled'}>
-        Continue
+        Продолжить
       </button>
     </div>`,
 
   home: () => {
     const reportList = state.reports.length
       ? state.reports
-          .map((report) => reportCard(report, `${modeLabel(report)} · RU + KK · ${report.date}`))
+          .map((report) => reportCard(report, `${modeLabel(report)} · рус. + каз. · ${report.date}`))
           .join('')
-      : '<p class="muted">No reports yet.</p>';
+      : '<p class="muted">Отчётов пока нет.</p>';
     return `
-      ${topBar('VeriTalk', 'Home')}
+      ${topBar('VeriTalk', 'Главная')}
       <div class="content">
-        <button class="btn" data-action="navigate" data-value="upload">Analyse a recorded call</button>
-        <button class="btn secondary" data-action="navigate" data-value="live">Live call on speakerphone</button>
-        <h4>Reports</h4>
+        <button class="btn" data-action="navigate" data-value="upload">Проверить запись звонка</button>
+        <button class="btn secondary" data-action="navigate" data-value="live">Живой анализ по громкой связи</button>
+        <h4>Отчёты</h4>
         ${reportList}
       </div>
       ${bottomNav()}`;
@@ -271,18 +271,18 @@ const screens = {
   upload: () => {
     if (!state.consent.analysis) return consentRequiredScreen();
     return `
-      ${topBar('Choose a recording', 'UC-2', 'home')}
+      ${topBar('Выберите запись', 'UC-2', 'home')}
       <div class="content">
         <p class="muted">
-          Shared from your phone app. Record calls in the dialer, then share the file to VeriTalk.
+          Запишите звонок в приложении «Телефон» и поделитесь файлом с VeriTalk.
         </p>
         <div class="card" data-action="pickRecording">
           Call_2026-10-19_14-02.m4a<br>
-          <small>0:38 · Russian / Kazakh</small>
+          <small>0:38 · русский / казахский</small>
         </div>
         <div class="card" data-action="pickRecording" data-value="fail">
           Call_2026-10-18_09-15.m4a<br>
-          <small>0:06 · no speech (shows the failure path)</small>
+          <small>0:06 · без речи (пример ошибки)</small>
         </div>
       </div>`;
   },
@@ -294,24 +294,24 @@ const screens = {
       return `<div class="step">○ ${step}</div>`;
     }).join('');
     return `
-      ${topBar('Analysing', 'UC-2')}
+      ${topBar('Анализ', 'UC-2')}
       <div class="content">
         ${steps}
-        <p class="muted">The audio is deleted when the analysis finishes, fails or is cancelled.</p>
-        <button class="btn secondary" data-action="cancelAnalysis">Cancel</button>
+        <p class="muted">Аудио удаляется, когда анализ завершён, прерван ошибкой или отменён.</p>
+        <button class="btn secondary" data-action="cancelAnalysis">Отмена</button>
       </div>`;
   },
 
   analysisFailed: () => `
-    ${topBar('Analysis failed', 'UC-2', 'home')}
+    ${topBar('Анализ не удался', 'UC-2', 'home')}
     <div class="content">
-      <h3>No speech detected</h3>
+      <h3>Речь не обнаружена</h3>
       <p>
-        We could not find speech in this recording. Check that the call was
-        recorded with sound, then try another file.
+        В этой записи не удалось найти речь. Проверьте, что звонок записан
+        со звуком, и попробуйте другой файл.
       </p>
-      <div class="success">✔ Audio deleted</div>
-      <button class="btn" data-action="navigate" data-value="upload">Choose another recording</button>
+      <div class="success">✔ Аудио удалено</div>
+      <button class="btn" data-action="navigate" data-value="upload">Выбрать другую запись</button>
     </div>`,
 
   live: () => {
@@ -319,14 +319,14 @@ const screens = {
 
     if (!state.live.listening) {
       return `
-        ${topBar('Live analysis', 'UC-3', 'home')}
+        ${topBar('Живой анализ', 'UC-3', 'home')}
         <div class="content">
           <p>
-            Put the call on speakerphone and keep this phone close. VeriTalk
-            listens through the microphone and updates the risk as the call goes on.
+            Включите громкую связь и держите телефон рядом. VeriTalk слушает
+            через микрофон и обновляет оценку риска по ходу разговора.
           </p>
-          <p class="muted">A notification stays visible while the app is listening. Audio is not stored.</p>
-          <button class="btn" data-action="startLive">Start listening</button>
+          <p class="muted">Пока приложение слушает, на экране видно уведомление. Аудио не сохраняется.</p>
+          <button class="btn" data-action="startLive">Начать анализ</button>
         </div>`;
     }
 
@@ -338,14 +338,14 @@ const screens = {
           <div class="utterance">
             <small>${formatTime(segment.start)}</small> ${highlight(segment)}
           </div>`)
-        .join('') || '<p class="muted">Waiting for speech…</p>';
+        .join('') || '<p class="muted">Ожидание речи…</p>';
     return `
-      ${topBar('Listening…', 'UC-3')}
+      ${topBar('Идёт анализ…', 'UC-3')}
       <div class="content">
         ${riskGauge(score)}
         ${utterances}
-        <p class="muted">Audio is not stored. Buffered audio is deleted when you stop.</p>
-        <button class="btn danger" data-action="stopLive">Stop and save report</button>
+        <p class="muted">Аудио не сохраняется. Буфер удаляется после остановки.</p>
+        <button class="btn danger" data-action="stopLive">Остановить и сохранить отчёт</button>
       </div>
       ${state.live.warningVisible ? highRiskWarning(score) : ''}`;
   },
@@ -383,40 +383,40 @@ const screens = {
       .join('');
 
     const audioDeletedNotice = state.justAnalysed
-      ? `<div class="success">✔ Audio deleted · ${unsaved ? 'report not saved' : 'only the report is kept'}</div>`
+      ? `<div class="success">✔ Аудио удалено · ${unsaved ? 'отчёт не сохранён' : 'сохранён только отчёт'}</div>`
       : '';
 
     let ownerControls = '';
     if (!readOnly && unsaved) {
       ownerControls = `
         <p class="muted">
-          This report is shown once and is not kept. Turn on “Save reports” in
-          Settings to keep and share reports.
+          Этот отчёт показан один раз и не сохраняется. Включите «Сохранять
+          отчёты» в настройках, чтобы хранить отчёты и делиться ими.
         </p>`;
     } else if (!readOnly) {
       ownerControls = `
-        <button class="btn secondary" data-action="navigate" data-value="share">Share with a family member</button>
-        <button class="btn danger" data-action="askDelete" data-value="one">Delete this report</button>`;
+        <button class="btn secondary" data-action="navigate" data-value="share">Поделиться с родственником</button>
+        <button class="btn danger" data-action="askDelete" data-value="one">Удалить этот отчёт</button>`;
     }
 
     const deleteDialog =
       state.pendingDelete === 'one'
         ? confirmDialog(
-            'Delete this report?',
-            'The report, its indicators, evidence and shares are removed. This cannot be undone.',
+            'Удалить этот отчёт?',
+            'Отчёт, его индикаторы, доказательства и доступы будут удалены. Это нельзя отменить.',
           )
         : '';
 
     return `
-      ${topBar(readOnly ? 'Shared report' : 'Risk report', readOnly ? 'UC-8' : 'UC-5', readOnly ? 'sharedWithMe' : 'home')}
+      ${topBar(readOnly ? 'Общий отчёт' : 'Отчёт о риске', readOnly ? 'UC-8' : 'UC-5', readOnly ? 'sharedWithMe' : 'home')}
       <div class="content">
         ${audioDeletedNotice}
         ${riskGauge(report.score)}
         <p class="muted" style="text-align:center">
-          ${modeLabel(report)} · RU + KK · ${report.date}${unsaved ? ' · not saved' : ''}
+          ${modeLabel(report)} · рус. + каз. · ${report.date}${unsaved ? ' · не сохранён' : ''}
         </p>
         ${indicators}
-        <p class="muted">Advisory only. VeriTalk never blocks or ends calls.</p>
+        <p class="muted">Это только рекомендация. VeriTalk никогда не блокирует и не завершает звонки.</p>
         ${ownerControls}
       </div>
       ${deleteDialog}`;
@@ -428,35 +428,35 @@ const screens = {
         .sharedWith.map((name, index) => `
           <div class="toggle-row">
             <span>${name}</span>
-            <button data-action="revokeShare" data-value="${index}">Revoke</button>
+            <button data-action="revokeShare" data-value="${index}">Отозвать</button>
           </div>`)
-        .join('') || '<p class="muted">Nobody yet.</p>';
+        .join('') || '<p class="muted">Пока ни у кого.</p>';
     return `
-      ${topBar('Share report', 'UC-7', 'report')}
+      ${topBar('Поделиться отчётом', 'UC-7', 'report')}
       <div class="content">
-        <p>Family members see the score, indicators and evidence. They never get audio.</p>
-        <input type="text" id="share-with" placeholder="Family member's account">
-        <button class="btn" data-action="addShare">Share</button>
-        <h4>Shared with</h4>
+        <p>Родственник увидит оценку, индикаторы и доказательства. Аудио он не получает.</p>
+        <input type="text" id="share-with" placeholder="Аккаунт родственника">
+        <button class="btn" data-action="addShare">Поделиться</button>
+        <h4>Доступ есть у</h4>
         ${sharedWith}
       </div>`;
   },
 
   settings: () => `
-    ${topBar('Settings', 'UC-1 · UC-6')}
+    ${topBar('Настройки', 'UC-1 · UC-6')}
     <div class="content">
-      <h4>Consent</h4>
-      ${consentToggle('analysis', 'Call analysis')}
-      ${consentToggle('storage', 'Save reports')}
-      <h4>Your data</h4>
-      <button class="btn danger" data-action="askDelete">Delete all reports and personal data</button>
+      <h4>Согласие</h4>
+      ${consentToggle('analysis', 'Анализ звонков')}
+      ${consentToggle('storage', 'Сохранять отчёты')}
+      <h4>Ваши данные</h4>
+      <button class="btn danger" data-action="askDelete">Удалить все отчёты и личные данные</button>
     </div>
     ${bottomNav()}
     ${
       state.pendingDelete === 'all'
         ? confirmDialog(
-            'Delete everything?',
-            'Reports, indicators, evidence and shares are removed. This cannot be undone.',
+            'Удалить всё?',
+            'Отчёты, индикаторы, доказательства и доступы будут удалены. Это нельзя отменить.',
           )
         : ''
     }`,
@@ -465,11 +465,11 @@ const screens = {
     const shared = state.reports.filter((report) => report.sharedWith.length);
     const list =
       shared
-        .map((report) => reportCard(report, `Shared by your relative · ${report.date}`))
+        .map((report) => reportCard(report, `От вашего родственника · ${report.date}`))
         .join('') ||
-      '<p class="muted">Nothing is shared with you. The owner may have revoked access.</p>';
+      '<p class="muted">С вами пока ничем не поделились. Возможно, владелец отозвал доступ.</p>';
     return `
-      ${topBar('Shared with me', 'UC-8')}
+      ${topBar('Общие отчёты', 'UC-8')}
       <div class="content">${list}</div>`;
   },
 };
@@ -486,17 +486,17 @@ function sidebar() {
       </button>`,
   ).join('');
   return `
-    <h1>VeriTalk prototype</h1>
+    <h1>Прототип VeriTalk</h1>
     <p>
-      Clickable mockup of the key use cases from docs/07-architecture.md.
-      All data is illustrative. Start with UC-1.
+      Кликабельный макет ключевых сценариев из docs/07-architecture.md.
+      Все данные условные. Начните с UC-1.
     </p>
     <div class="role">
-      ${roleButton('user', 'Phone user')}
-      ${roleButton('family', 'Family member')}
+      ${roleButton('user', 'Пользователь')}
+      ${roleButton('family', 'Родственник')}
     </div>
     ${shortcuts}
-    <button data-action="reset">Reset prototype</button>`;
+    <button data-action="reset">Сбросить прототип</button>`;
 }
 
 function currentApiCall() {
@@ -578,7 +578,7 @@ const actions = {
 
   cancelAnalysis: () => {
     navigate('home');
-    showToast('Analysis cancelled · ✔ audio deleted');
+    showToast('Анализ отменён · ✔ аудио удалено');
   },
 
   startLive: () => {
@@ -613,7 +613,7 @@ const actions = {
   },
 
   addShare: () => {
-    const name = document.getElementById('share-with').value.trim() || 'Family member';
+    const name = document.getElementById('share-with').value.trim() || 'Родственник';
     currentReport().sharedWith.push(name);
     render();
   },
@@ -637,12 +637,12 @@ const actions = {
     if (state.pendingDelete === 'one') {
       state.reports = state.reports.filter((report) => report.id !== state.currentReportId);
       navigate('home');
-      showToast('Report deleted');
+      showToast('Отчёт удалён');
     } else {
       state.reports = [];
       state.unsavedReport = null;
       state.pendingDelete = null;
-      showToast('All reports and personal data deleted');
+      showToast('Все отчёты и личные данные удалены');
     }
   },
 

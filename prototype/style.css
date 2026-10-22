@@ -315,8 +315,13 @@ mark {
   padding: 10px;
   display: flex;
   justify-content: space-between;
+  gap: 12px;
   cursor: pointer;
   font-weight: 600;
+}
+
+.indicator-head span:last-child {
+  white-space: nowrap;
 }
 
 .evidence {

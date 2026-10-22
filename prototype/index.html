@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VeriTalk clickable prototype (VRT-9)</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font:14px/1.45 system-ui,sans-serif;background:#eef1f5;color:#1b1f24;display:flex;gap:28px;justify-content:center;padding:24px;flex-wrap:wrap}
+aside{width:270px}aside h1{font-size:18px;margin:0 0 4px}aside p{margin:4px 0 12px;color:#556}
+aside button{display:block;width:100%;text-align:left;margin:4px 0;padding:8px 10px;border:1px solid #cfd6df;background:#fff;border-radius:8px;cursor:pointer;font:inherit}
+aside button:hover{background:#e8f0fe}.role{display:flex;gap:6px;margin:12px 0}.role button{text-align:center;margin:0}.role .on{background:#1a73e8;color:#fff;border-color:#1a73e8}
+.phone{width:360px;height:700px;border:10px solid #20242a;border-radius:34px;background:#fff;display:flex;flex-direction:column;overflow:hidden;position:relative}
+.sb{display:flex;justify-content:space-between;padding:4px 14px;font-size:11px;background:#f4f6f9;color:#556}
+#scr{flex:1;overflow:auto;display:flex;flex-direction:column}.bar{display:flex;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid #e3e7ed;font-weight:600}
+.bar .uc{margin-left:auto;font-size:11px;background:#e8f0fe;color:#1a56b0;padding:2px 7px;border-radius:10px}.bar button{border:0;background:none;font-size:18px;cursor:pointer}
+.p{padding:14px;flex:1}.btn{display:block;width:100%;padding:12px;margin:8px 0;border:0;border-radius:10px;background:#1a73e8;color:#fff;font:inherit;font-weight:600;cursor:pointer}
+.btn.sec{background:#e8f0fe;color:#1a56b0}.btn.red{background:#c62828}.btn:disabled{background:#c5cad3;cursor:not-allowed}
+.card{border:1px solid #e3e7ed;border-radius:12px;padding:12px;margin:8px 0;cursor:pointer}.card small,.muted{color:#667}
+.tg{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #eef0f4}
+.chip{display:inline-block;color:#fff;border-radius:10px;padding:2px 8px;font-size:12px;font-weight:600}
+.gauge{width:112px;height:112px;border-radius:50%;border:9px solid var(--c);margin:8px auto;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--c)}
+.gauge b{font-size:34px;line-height:1}.lvl{text-align:center;font-weight:700;font-size:16px}
+.ind{border:1px solid #e3e7ed;border-radius:10px;margin:8px 0;overflow:hidden}.ind>div:first-child{padding:10px;display:flex;justify-content:space-between;cursor:pointer;font-weight:600}
+.ev{padding:8px 10px;background:#f6f8fb;border-top:1px solid #e3e7ed}.ev i{color:#667;font-style:normal;margin-right:6px}
+.warn{background:#c62828;color:#fff;border-radius:12px;padding:12px;margin:8px 0}.warn button{margin-top:8px;padding:6px 12px;border:0;border-radius:8px;background:#fff;color:#c62828;font-weight:600;cursor:pointer}
+.ut{padding:6px 10px;margin:4px 0;background:#f1f3f7;border-radius:10px}.nav{display:flex;border-top:1px solid #e3e7ed}.nav button{flex:1;padding:12px;border:0;background:none;font:inherit;cursor:pointer}
+.nav .on{color:#1a73e8;font-weight:700}.toast{position:absolute;bottom:60px;left:20px;right:20px;background:#20242a;color:#fff;padding:10px;border-radius:10px;text-align:center}
+.modal{position:absolute;inset:0;background:#0008;display:flex;align-items:center;padding:24px}.modal>div{background:#fff;border-radius:14px;padding:16px;width:100%}
+input[type=text]{width:100%;padding:10px;border:1px solid #cfd6df;border-radius:8px;font:inherit}.step{padding:6px 0;color:#99a}.step.d{color:#2e7d32}.step.c{color:#1a56b0;font-weight:600}
+#api{margin-top:10px;font:12px ui-monospace,monospace;background:#20242a;color:#cde;padding:8px 10px;border-radius:8px;width:340px}
+</style></head><body>
+<aside id="side"></aside>
+<main><div class="phone"><div class="sb"><span>9:41</span><span>VeriTalk prototype</span></div><div id="scr"></div></div><div id="api"></div></main>
+<script>
+// Illustrative data only. Indicator types follow the taxonomy in docs/07-architecture.md (Section VII).
+const IND={authority:['Authority impersonation',.93],urgency:['Urgency and threats',.88],otp:['Request for a one-time code',.96],secret:['Demand for secrecy',.81]};
+const SEG=[
+ {t:2,ind:'authority',s:20,txt:'Здравствуйте, это служба безопасности банка.'},
+ {t:9,ind:'urgency',s:38,txt:'Сіздің картаңыз бойынша подозрительная операция.'},
+ {t:15,ind:'urgency',s:55,txt:'Чтобы отменить перевод, действуйте прямо сейчас.'},
+ {t:23,ind:'otp',s:78,txt:'Назовите код из SMS, который сейчас придёт.'},
+ {t:31,ind:'secret',s:91,txt:'Никому не говорите об этом разговоре.'}];
+const THRESH=70,STEPS=['Uploading recording','Detecting speech (VAD)','Transcribing (RU / KK)','Scoring indicators','Building explanation'];
+const UCS=[['UC-1','Manage consent'],['UC-2','Analyse a recorded call'],['UC-3','Analyse a live call'],['UC-4','Warn about high risk (live)'],['UC-5','View a risk report'],['UC-6','Delete reports and data'],['UC-7','Share a risk report'],['UC-8','View a shared report (family)']];
+const API={consent:'PUT /v1/consents {analysis, report_storage}',home:'GET /v1/reports',upload:'POST /v1/recordings (multipart) -> 202 {job_id}',proc:'GET /v1/jobs/{job_id} -> report_id; audio deleted',live:'WS /v1/live: audio chunks -> {score, indicators, warning}',report:'GET /v1/reports/{id}',share:'POST /v1/reports/{id}/shares | DELETE .../shares/{id}',settings:'PUT /v1/consents | DELETE /v1/reports',fhome:'GET /v1/shared-reports',blocked:'POST /v1/recordings -> 403 consent_required'};
+const col=s=>s>=70?'#c62828':s>=40?'#ed6c02':'#2e7d32',lvl=s=>s>=70?'High risk':s>=40?'Medium risk':'Low risk',tm=s=>Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
+const mk=(mode,id)=>({id,mode,score:91,date:'Oct 19, 14:02',segs:SEG,sharedWith:mode=='recording'?['Family member']:[]});
+let S,timer;
+function init(){clearInterval(timer);S={scr:'consent',role:'user',c:{a:false,s:false},reports:[mk('recording',1)],cur:1,tmp:null,open:{},live:{on:false,n:0,warn:false,warned:false},proc:0,tok:0,toast:'',confirm:false}}
+const R=()=>S.reports.find(x=>x.id==S.cur)||S.tmp;
+const bar=(t,uc,back)=>`<div class="bar">${back?`<button data-a="nav" data-v="${back}">←</button>`:''}${t}<span class="uc">${uc}</span></div>`;
+const tog=(k,l)=>`<label class="tg"><span>${l}</span><input type="checkbox" data-k="${k}" ${S.c[k]?'checked':''}></label>`;
+const gauge=s=>`<div class="gauge" style="--c:${col(s)}"><b>${s}</b><small>/100</small></div><div class="lvl" style="color:${col(s)}">${lvl(s)}</div>`;
+const nav=()=>`<div class="nav"><button class="${S.scr!='settings'?'on':''}" data-a="nav" data-v="home">Home</button><button class="${S.scr=='settings'?'on':''}" data-a="nav" data-v="settings">Settings</button></div>`;
+const blocked=()=>`${bar('Consent required','UC-1')}<div class="p"><h3>Analysis is off</h3><p>VeriTalk cannot analyse calls until you give consent. Nothing was uploaded.</p><button class="btn" data-a="nav" data-v="consent">Open consent</button></div>`;
+const V={
+consent:()=>`${bar('Before we start','UC-1')}<div class="p"><p>VeriTalk analyses the <b>content</b> of a call on our server. Audio is deleted as soon as the analysis ends. Only the report is kept, and only if you allow it.</p>${tog('a','Allow call analysis (required)')}${tog('s','Save reports to my account')}<button class="btn" data-a="nav" data-v="home" ${S.c.a?'':'disabled'}>Continue</button></div>`,
+home:()=>`${bar('VeriTalk','Home')}<div class="p"><button class="btn" data-a="nav" data-v="upload">Analyse a recorded call</button><button class="btn sec" data-a="nav" data-v="live">Live call on speakerphone</button><h4>Reports</h4>${S.reports.length?S.reports.map(r=>`<div class="card" data-a="open" data-v="${r.id}"><span class="chip" style="background:${col(r.score)}">${r.score}</span> ${lvl(r.score)}<br><small>${r.mode=='live'?'Live call':'Recorded call'} · RU + KK · ${r.date}</small></div>`).join(''):'<p class="muted">No reports yet.</p>'}</div>${nav()}`,
+upload:()=>!S.c.a?blocked():`${bar('Choose a recording','UC-2','home')}<div class="p"><p class="muted">Shared from your phone app. Record calls in the dialer, then share the file to VeriTalk.</p><div class="card" data-a="pick">Call_2026-10-19_14-02.m4a<br><small>0:38 · Russian / Kazakh</small></div><div class="card" data-a="pick">Call_2026-10-18_09-15.m4a<br><small>1:12 · Russian</small></div></div>`,
+proc:()=>`${bar('Analysing','UC-2')}<div class="p">${STEPS.map((x,i)=>`<div class="step ${i<S.proc?'d':i==S.proc?'c':''}">${i<S.proc?'✔':i==S.proc?'…':'○'} ${x}</div>`).join('')}<p class="muted">The audio is deleted when the analysis finishes.</p></div>`,
+live:()=>{if(!S.c.a)return blocked();const L=S.live;if(!L.on)return `${bar('Live analysis','UC-3','home')}<div class="p"><p>Put the call on speakerphone and keep this phone close. VeriTalk listens through the microphone and updates the risk as the call goes on.</p><p class="muted">A notification stays visible while the app is listening. Audio is not stored.</p><button class="btn" data-a="start">Start listening</button></div>`;
+ const sc=L.n?SEG[L.n-1].s:0;return `${bar('Listening…','UC-3')}<div class="p">${L.warn?`<div class="warn"><b>UC-4 · High risk</b><br>The caller asked for an SMS code. Do not share it. End the call.<br><button data-a="dismiss">Dismiss</button></div>`:''}${gauge(sc)}${SEG.slice(0,L.n).map(x=>`<div class="ut"><small>${tm(x.t)}</small> ${x.txt}</div>`).join('')||'<p class="muted">Waiting for speech…</p>'}<button class="btn red" data-a="stop">Stop and save report</button></div>`},
+report:()=>{const r=R(),ro=S.role=='family',g={};r.segs.forEach(x=>(g[x.ind]=g[x.ind]||[]).push(x));
+ return `${bar(ro?'Shared report':'Risk report',ro?'UC-8':'UC-5',ro?'fhome':'home')}<div class="p">${gauge(r.score)}<p class="muted" style="text-align:center">${r.mode=='live'?'Live call':'Recorded call'} · RU + KK · ${r.date}${S.tmp&&r==S.tmp?' · not saved':''}</p>
+ ${Object.keys(g).map(k=>`<div class="ind"><div data-a="tgl" data-v="${k}"><span>${IND[k][0]}</span><span>${Math.round(IND[k][1]*100)}% ${S.open[k]?'▴':'▾'}</span></div>${S.open[k]?g[k].map(x=>`<div class="ev"><i>${tm(x.t)}</i>${x.txt}</div>`).join(''):''}</div>`).join('')}
+ <p class="muted">Advisory only. VeriTalk never blocks or ends calls.</p>${ro?'':`<button class="btn sec" data-a="nav" data-v="share">Share with a family member</button><button class="btn sec" data-a="nav" data-v="settings">Delete data…</button>`}</div>`},
+share:()=>{const r=R();return `${bar('Share report','UC-7','report')}<div class="p"><p>Family members see the score, indicators and evidence. They never get audio.</p><input type="text" id="who" placeholder="Family member's account"><button class="btn" data-a="share">Share</button><h4>Shared with</h4>${r.sharedWith.map((n,i)=>`<div class="tg"><span>${n}</span><button data-a="revoke" data-v="${i}">Revoke</button></div>`).join('')||'<p class="muted">Nobody yet.</p>'}</div>`},
+settings:()=>`${bar('Settings','UC-1 · UC-6')}<div class="p"><h4>Consent</h4>${tog('a','Call analysis')}${tog('s','Save reports')}<h4>Your data</h4><button class="btn red" data-a="del">Delete all reports and personal data</button></div>${nav()}${S.confirm?`<div class="modal"><div><b>Delete everything?</b><p>Reports, indicators, evidence and shares are removed. This cannot be undone.</p><button class="btn red" data-a="delok">Delete</button><button class="btn sec" data-a="delno">Cancel</button></div></div>`:''}`,
+fhome:()=>{const l=S.reports.filter(r=>r.sharedWith.length);return `${bar('Shared with me','UC-8')}<div class="p">${l.map(r=>`<div class="card" data-a="open" data-v="${r.id}"><span class="chip" style="background:${col(r.score)}">${r.score}</span> ${lvl(r.score)}<br><small>Shared by your relative · ${r.date}</small></div>`).join('')||'<p class="muted">Nothing is shared with you. The owner may have revoked access.</p>'}</div>`}};
+function render(){document.getElementById('scr').innerHTML=V[S.scr]()+(S.toast?`<div class="toast">${S.toast}</div>`:'');document.getElementById('api').textContent=API[S.scr==='upload'&&!S.c.a||S.scr==='live'&&!S.c.a?'blocked':S.scr]||'';
+ document.getElementById('side').innerHTML=`<h1>VeriTalk prototype</h1><p>Clickable mockup of the key use cases from docs/07-architecture.md. All data is illustrative. Start with UC-1.</p><div class="role"><button class="${S.role=='user'?'on':''}" data-a="role" data-v="user">Phone user</button><button class="${S.role=='family'?'on':''}" data-a="role" data-v="family">Family member</button></div>${UCS.map(u=>`<button data-a="jump" data-v="${u[0]}"><b>${u[0]}</b> ${u[1]}</button>`).join('')}<button data-a="reset">Reset prototype</button>`}
+function toast(m){S.toast=m;render();setTimeout(()=>{S.toast='';render()},1800)}
+function addReport(mode){const r=mk(mode,Date.now());if(S.c.s){S.reports.unshift(r);S.tmp=null}else S.tmp=r;S.cur=r.id;S.scr='report';S.open={};render()}
+function go(x){clearInterval(timer);S.tok++;S.scr=x;render()}
+const A={
+nav:v=>go(v),open:v=>{S.cur=+v;go('report')},tgl:v=>{S.open[v]=!S.open[v];render()},
+pick:()=>{S.scr='proc';S.proc=0;const t=++S.tok;render();const f=()=>{if(S.tok!==t)return;S.proc++;S.proc>=5?addReport('recording'):(render(),setTimeout(f,700))};setTimeout(f,700)},
+start:()=>{S.live={on:true,n:0,warn:false,warned:false};const t=++S.tok;render();clearInterval(timer);timer=setInterval(()=>{if(S.tok!==t||S.live.n>=SEG.length)return clearInterval(timer);S.live.n++;if(SEG[S.live.n-1].s>=THRESH&&!S.live.warned){S.live.warned=S.live.warn=true}render()},1500)},
+dismiss:()=>{S.live.warn=false;render()},stop:()=>{clearInterval(timer);S.tok++;addReport('live')},
+share:()=>{const w=document.getElementById('who').value.trim()||'Family member';R().sharedWith.push(w);render()},
+revoke:v=>{R().sharedWith.splice(+v,1);render()},del:()=>{S.confirm=true;render()},delno:()=>{S.confirm=false;render()},
+delok:()=>{S.reports=[];S.tmp=null;S.confirm=false;toast('All reports and personal data deleted')},
+role:v=>{S.role=v;go(v=='family'?'fhome':'home')},reset:()=>{init();render()},
+jump:v=>{S.live={on:false,n:0,warn:false,warned:false};const m={'UC-1':['consent','user'],'UC-2':['upload','user'],'UC-3':['live','user'],'UC-4':['live','user'],'UC-5':['report','user'],'UC-6':['settings','user'],'UC-7':['share','user'],'UC-8':['fhome','family']}[v];if(!S.reports.length&&['UC-5','UC-7'].includes(v)){S.reports=[mk('recording',1)]}S.cur=S.reports[0]?S.reports[0].id:S.cur;S.role=m[1];go(m[0])}};
+document.addEventListener('click',e=>{const a=e.target.closest('[data-a]');if(a)A[a.dataset.a](a.dataset.v)});
+document.addEventListener('change',e=>{const k=e.target.dataset.k;if(k){S.c[k]=e.target.checked;render()}});
+init();render();
+</script></body></html>

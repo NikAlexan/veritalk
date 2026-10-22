@@ -58,7 +58,7 @@ The rationale for each choice is given in [docs/05-technology-comparison.md](doc
 
 ## Current Status
 
-Pre-defense 1 stage: analysis and design. The repository contains documents and diagrams; application code starts after pre-defense 1. Milestones, owners and risks are listed in [docs/09-risks-and-management.md](docs/09-risks-and-management.md).
+Pre-defense 1 stage: analysis and design. The repository contains documents, diagrams and a clickable prototype; application code starts after pre-defense 1. Milestones, owners and risks are listed in [docs/09-risks-and-management.md](docs/09-risks-and-management.md).
 
 ## Project Links
 
@@ -68,4 +68,5 @@ Pre-defense 1 stage: analysis and design. The repository contains documents and 
 - [Existing system comparison](docs/04-existing-systems.md)
 - [Technology comparison](docs/05-technology-comparison.md)
 - [Architecture description](docs/07-architecture.md) and [diagrams](diagrams/)
+- [Clickable prototype](prototype/): open `prototype/index.html` in a browser
 - [Project management and risks](docs/09-risks-and-management.md)

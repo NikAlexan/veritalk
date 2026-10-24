@@ -2,7 +2,7 @@
 
 **Project:** VeriTalk. Development of an Application for Assessing the Risk of Phone Conversations Using Artificial Intelligence
 **Task:** VRT-11 Project management and risks
-**Date:** Oct. 20, 2026 (statuses updated Oct. 21, 2026)
+**Date:** Oct. 20, 2026 (statuses updated Oct. 24, 2026)
 **Status:** Draft for pre-defense 1
 
 ## I. Management Approach
@@ -11,7 +11,7 @@ The team combines a phase-based plan for the whole diploma year with short itera
 
 The phase structure follows the PM² methodology of the European Commission [1]. PM² divides a project into four phases (Initiating, Planning, Executing and Closing), and runs monitoring and control across all of them [1]. Three review and approval gates separate the phases: Ready for Planning at the end of Initiating, Ready for Executing at the end of Planning, and Ready for Closing at the end of Executing [1]. VeriTalk maps the gates onto the academic calendar:
 
-- Ready for Planning: the supervisor approved the individual work plans and the team merged the proposal (VRT-2, Oct. 18, 2026).
+- Ready for Planning: the team merged the proposal (VRT-2, Oct. 18, 2026) and the supervisor approved the individual work plans (Oct. 19, 2026).
 - Ready for Executing: pre-defense 1 (Oct. 24, 2026), where the committee reviews the analysis and design.
 - Ready for Closing: the final pre-defense (May 2027), where the committee reviews the finished prototype and evaluation.
 
@@ -66,9 +66,9 @@ The team records responsibilities in a RASCI matrix, the form of responsibility 
 | 6 | Requirements specification, `docs/06-requirements.md` | VRT-7 | A/R | C | S | C | Done Oct. 21 |
 | 7 | Architecture and diagrams, `docs/07-architecture.md` | VRT-8 | A/R | C | C | C | Done Oct. 20 |
 | 8 | UX / prototype, `prototype/` | VRT-9 | C | A/R | I | C | Done Oct. 22 |
-| 9 | Verification and evaluation plan, `docs/08-verification-plan.md` | VRT-10 | S | C | A/R | C | Oct. 24 |
+| 9 | Verification and evaluation plan, `docs/08-verification-plan.md` | VRT-10 | S | C | A/R | C | Done Oct. 24 |
 | 10 | Project management and risks, this document | VRT-11 | A/R | S | C | C | Oct. 24 |
-| 11 | Supervisor feedback, `docs/10-supervisor-feedback.md` | VRT-12 | S | A/R | S | C | Oct. 23 |
+| 11 | Supervisor feedback, `docs/10-supervisor-feedback.md` | VRT-12 | S | A/R | S | C | Done Oct. 24 |
 | 12 | Submission: tag `pre-defense-1` and summary | VRT-13 | A/R | S | S | I | Oct. 24, 18:00 |
 | 13 | Consistency fixes across 02, 04, 07, 09 and the interview notes | VRT-17 | C | A/R | C | I | Oct. 23 |
 
@@ -97,7 +97,7 @@ Table III lists the milestones up to the final defense and maps them to the PM²
 
 | ID | Phase | Milestone | Date | Owner | Done when |
 | --- | --- | --- | --- | --- | --- |
-| M0 | Initiating | Proposal approved, gate Ready for Planning | Oct. 18, 2026 | Danial | The proposal is merged (VRT-2) and the supervisor has approved the individual work plans |
+| M0 | Initiating | Proposal approved, gate Ready for Planning | Oct. 19, 2026 | Danial | The proposal is merged (VRT-2) and the supervisor has approved the individual work plans |
 | M1 | Planning | Analysis complete | Oct. 21, 2026 | Danial | Interview notes and the literature review are merged (VRT-3, VRT-4) |
 | M2 | Planning | Design complete | Oct. 22, 2026 | Nikita | Requirements, architecture and prototype are merged (VRT-6 to VRT-9) |
 | M3 | Planning | Supervisor review | Oct. 22, 2026 | Danial | The supervisor has reviewed the drafts; by Oct. 23 each comment has a decision in VRT-12 |

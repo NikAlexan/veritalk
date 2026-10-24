@@ -64,9 +64,13 @@ Pre-defense 1 stage: analysis and design. The repository contains documents, dia
 
 - YouTrack project: <https://veritalk.youtrack.cloud/issues/VRT>
 - [Project proposal](docs/01-proposal.md)
+- [Evidence of relevance](docs/02-relevance-evidence.md)
 - [Literature review](docs/03-literature-review.md)
 - [Existing system comparison](docs/04-existing-systems.md)
 - [Technology comparison](docs/05-technology-comparison.md)
+- [Requirements specification](docs/06-requirements.md)
 - [Architecture description](docs/07-architecture.md) and [diagrams](diagrams/)
 - [Clickable prototype](prototype/): open `prototype/index.html` in a browser
+- [Verification and evaluation plan](docs/08-verification-plan.md)
 - [Project management and risks](docs/09-risks-and-management.md)
+- [Supervisor feedback](docs/10-supervisor-feedback.md)
